@@ -3,7 +3,7 @@ using namespace ffglex;
 
 static CFFGLPluginInfo PluginInfo(
 	PluginFactory< Source >,		// Create method
-	"EX01",							// Plugin unique ID
+	"SX01",							// Plugin unique ID
 	"Source Example",				// Plugin name
 	2,								// API major version number
 	1,								// API minor version number
@@ -13,6 +13,7 @@ static CFFGLPluginInfo PluginInfo(
 	"Sample FFGL Source plugin",	// Plugin description
 	"Resolume FFGL Example"			// About
 );
+
 static const char vertexShaderCode[] = R"(#version 410 core
 layout( location = 0 ) in vec4 vPosition;
 layout( location = 1 ) in vec2 vUV;
@@ -27,20 +28,21 @@ void main()
 )";
 
 static const char fragmentShaderCode[] = R"(#version 410 core
-uniform vec3 RGBLeft;
-uniform vec3 RGBRight;
-
 in vec2 uv;
 
 out vec4 fragColor;
 
 void main()
 {
-	fragColor = vec4(1.0, 0.0, 0.0, 1.0 );
+	fragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
 )";
+
 Source::Source()
 {
+	// Input properties
+	SetMinInputs(0);
+	SetMaxInputs(0);
 }
 
 Source::~Source()
