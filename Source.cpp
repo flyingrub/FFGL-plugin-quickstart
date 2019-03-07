@@ -1,20 +1,8 @@
 #include "Source.h"
 using namespace ffglex;
 
-static CFFGLPluginInfo PluginInfo(
-	PluginFactory< Source >,		// Create method
-	"SX01",							// Plugin unique ID
-	"Source Example",				// Plugin name
-	2,								// API major version number
-	1,								// API minor version number
-	1,								// Plugin major version number
-	000,							// Plugin minor version number
-	FF_SOURCE,						// Plugin type
-	"Sample FFGL Source plugin",	// Plugin description
-	"Resolume FFGL Example"			// About
-);
 
-static const char vertexShaderCode[] = R"(#version 410 core
+static std::string vertexShaderCode = R"(#version 410 core
 layout( location = 0 ) in vec4 vPosition;
 layout( location = 1 ) in vec2 vUV;
 
@@ -27,22 +15,13 @@ void main()
 }
 )";
 
-static const char fragmentShaderCode[] = R"(#version 410 core
-in vec2 uv;
-
-out vec4 fragColor;
-
-void main()
-{
-	fragColor = vec4(1.0, 0.0, 0.0, 1.0);
-}
-)";
+static std::string fragmentShaderCodeStart = R"(#version 410 core)";
 
 Source::Source()
 {
-	// Input properties
 	SetMinInputs(0);
 	SetMaxInputs(0);
+
 }
 
 Source::~Source()
@@ -51,6 +30,18 @@ Source::~Source()
 
 FFResult Source::InitGL(const FFGLViewportStruct * vp)
 {
+	std::string fragmentShaderCode = fragmentShader;
+	int i = 0;
+	while (i < params.size()) {
+		if (isColor(i)) {
+			fragmentShaderCode += "uniform vec3 " + params[i].name + ";\n";
+			i += 3;
+		} else {
+			fragmentShaderCode += "uniform float " + params[i].name + ";\n";
+			i += 1;
+		}
+	}
+
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
 		DeInitGL();
@@ -68,6 +59,27 @@ FFResult Source::InitGL(const FFGLViewportStruct * vp)
 FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
+	int i = 0;
+	while (i < params.size()) {
+		if (isColor(i)) {
+			float rgb[3];
+			std::string name = params[i].name;
+			float hue = params[i].currentValue;
+			float saturation = params[i+1].currentValue;
+			float brightness = params[i+2].currentValue;
+			//we need to make sure the hue doesn't reach 1.0f, otherwise the result will be pink and not red how it should be
+			hue = (hue == 1.0f) ? 0.0f : hue; 
+			HSVtoRGB(hue, saturation, brightness, rgb[0], rgb[1], rgb[2]);
+			glUniform3f(shader.FindUniform(name.c_str()), rgb[0], rgb[1], rgb[2]);
+			i += 3;
+		} else {
+			std::string name = params[i].name;
+			float val = params[i].currentValue;
+			glUniform1f(shader.FindUniform(name.c_str()), val);
+			i += 1;
+		}
+	}
+	
 	quad.Draw();
 
 	return FF_SUCCESS;
@@ -80,12 +92,56 @@ FFResult Source::DeInitGL()
 	return FF_SUCCESS;
 }
 
-FFResult Source::SetFloatParameter(unsigned int dwIndex, float value)
+FFResult Source::SetFloatParameter(unsigned int index, float value)
 {
-	return FF_SUCCESS;
+	if (index < params.size()) {
+		params[index].currentValue = value;
+		return FF_SUCCESS;
+	} else {
+		return FF_FAIL;
+	}
 }
 
 float Source::GetFloatParameter(unsigned int index)
 {
-	return 0.0f;
+	if (index < params.size()) {
+		return params[index].currentValue;
+	} else {
+		return 0.0f;
+	}
+}
+
+void Source::setFragmentShader(std::string fShader)
+{
+	fragmentShader = fShader;
+}
+
+void Source::addParam(Param param)
+{
+	params.push_back(param);
+	SetParamInfof(params.size()-1, param.name.c_str(), param.type);
+}
+
+void Source::addColorParam(std::string name)
+{
+	addParam(Param(name, FF_TYPE_HUE));
+	addParam(Param(name, FF_TYPE_SATURATION,1.0));
+	addParam(Param(name, FF_TYPE_BRIGHTNESS,1.0));
+}
+
+bool Source::isColor(int index)
+{
+	bool enoughSpace = index + 2 < params.size();
+	if (!enoughSpace) return false;
+	bool isColorType =
+		params[index].type == FF_TYPE_HUE &&
+		params[index + 1].type == FF_TYPE_SATURATION &&
+		params[index + 2].type == FF_TYPE_BRIGHTNESS;
+	if (!isColorType) return false;
+
+	bool isSameName =
+		params[index].name.compare(params[index + 1].name) == 0 &&
+		params[index].name.compare(params[index + 2].name) == 0;
+
+	return isSameName;
 }
