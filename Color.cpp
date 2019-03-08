@@ -16,8 +16,8 @@ static CFFGLPluginInfo infos(
 std::string fShader = R"(
 void main()
 {
-	vec3 color = vec3(uv.x,uv.y,abs(sin(time))) * u_color;
-	fragColor = vec4(color, 1.0);
+	vec3 color = mix(vec3(uv.x,uv.y,abs(sin(time))), u_color, audioVolume);
+	fragColor = vec4(vec3(audioVolume)*color, 1.0);
 }
 )";
 

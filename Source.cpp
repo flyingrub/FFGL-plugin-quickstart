@@ -22,6 +22,7 @@ in vec2 uv;
 out vec4 fragColor;
 uniform float time;
 uniform float deltaTime;
+uniform float audioVolume;
 )";
 
 Source::Source()
@@ -87,6 +88,7 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			i += 1;
 		}
 	}
+
 	float timeNow = getTicks() / 1000.0f;
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate = timeNow;
@@ -98,7 +100,7 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	for (size_t index = 0; index < Audio::getBufferSize(); ++index)
 		fftData[index] = fftInfo->elements[index].value;
 	audio.update(fftData);
-
+	glUniform1f(shader.FindUniform("audioVolume"), audio.getCurrentVolume());
 
 	quad.Draw();
 
