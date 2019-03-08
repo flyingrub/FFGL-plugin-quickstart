@@ -26,7 +26,7 @@ class Source : public CFreeFrameGLPlugin
 public:
 	Source();
 	~Source();
-
+	
 	FFResult InitGL(const FFGLViewportStruct* vp) override;
 	FFResult ProcessOpenGL(ProcessOpenGLStruct* pGL) override;
 	FFResult DeInitGL() override;
@@ -43,4 +43,5 @@ private:
 	std::vector<Param> params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
+	float lastUpdate;
 };

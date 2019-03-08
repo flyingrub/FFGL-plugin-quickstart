@@ -1,6 +1,6 @@
 #include "Color.h"
 
-static CFFGLPluginInfo PluginInfo(
+static CFFGLPluginInfo infos(
 	PluginFactory< Color >,			// Create method
 	"SX01",							// Plugin unique ID
 	"Color",						// Plugin name
@@ -14,13 +14,9 @@ static CFFGLPluginInfo PluginInfo(
 );
 
 std::string fShader = R"(
-#version 410 core
-in vec2 uv;
-uniform vec3 color;
-out vec4 fragColor;
-
 void main()
 {
+	vec3 color = vec3(uv.x,uv.y,abs(sin(time))) * u_color;
 	fragColor = vec4(color, 1.0);
 }
 )";
@@ -28,7 +24,7 @@ void main()
 Color::Color()
 {
 	setFragmentShader(fShader);
-	addColorParam("color");
+	addColorParam("u_color");
 }
 
 Color::~Color()

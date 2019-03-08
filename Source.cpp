@@ -15,7 +15,13 @@ void main()
 }
 )";
 
-static std::string fragmentShaderCodeStart = R"(#version 410 core)";
+static std::string fragmentShaderCodeStart = R"(
+#version 410 core
+in vec2 uv;
+out vec4 fragColor;
+uniform float time;
+uniform float deltaTime;
+)";
 
 Source::Source()
 {
@@ -30,7 +36,7 @@ Source::~Source()
 
 FFResult Source::InitGL(const FFGLViewportStruct * vp)
 {
-	std::string fragmentShaderCode = fragmentShader;
+	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i = 0;
 	while (i < params.size()) {
 		if (isColor(i)) {
@@ -41,6 +47,7 @@ FFResult Source::InitGL(const FFGLViewportStruct * vp)
 			i += 1;
 		}
 	}
+	fragmentShaderCode += fragmentShader;
 
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
@@ -79,6 +86,11 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			i += 1;
 		}
 	}
+	float timeNow = getTicks() / 1000.0f;
+	float deltaTime = timeNow - lastUpdate;
+	lastUpdate = timeNow;
+	glUniform1f(shader.FindUniform("time"), timeNow);
+	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
 	
 	quad.Draw();
 
