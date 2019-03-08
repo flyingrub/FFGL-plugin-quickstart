@@ -2,6 +2,7 @@
 #include <FFGLSDK.h>
 #include <vector>
 #include <string>
+#include "Audio.h"
 
 class Param {
 public:
@@ -44,4 +45,5 @@ private:
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 	float lastUpdate;
+	Audio audio;
 };

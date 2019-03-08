@@ -1,6 +1,7 @@
 #include "Source.h"
 using namespace ffglex;
 
+static const int FFT_INPUT_INDEX = 0;
 
 static std::string vertexShaderCode = R"(#version 410 core
 layout( location = 0 ) in vec4 vPosition;
@@ -27,7 +28,7 @@ Source::Source()
 {
 	SetMinInputs(0);
 	SetMaxInputs(0);
-
+	SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
 }
 
 Source::~Source()
@@ -91,7 +92,14 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	lastUpdate = timeNow;
 	glUniform1f(shader.FindUniform("time"), timeNow);
 	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
-	
+
+	std::vector< float > fftData(Audio::getBufferSize());
+	const ParamInfo* fftInfo = FindParamInfo(FFT_INPUT_INDEX);
+	for (size_t index = 0; index < Audio::getBufferSize(); ++index)
+		fftData[index] = fftInfo->elements[index].value;
+	audio.update(fftData);
+
+
 	quad.Draw();
 
 	return FF_SUCCESS;
@@ -106,8 +114,9 @@ FFResult Source::DeInitGL()
 
 FFResult Source::SetFloatParameter(unsigned int index, float value)
 {
-	if (index < params.size()) {
-		params[index].currentValue = value;
+	if (index == FFT_INPUT_INDEX) return FF_SUCCESS;
+	if (index <= params.size()) {
+		params[index-1].currentValue = value;
 		return FF_SUCCESS;
 	} else {
 		return FF_FAIL;
@@ -116,8 +125,8 @@ FFResult Source::SetFloatParameter(unsigned int index, float value)
 
 float Source::GetFloatParameter(unsigned int index)
 {
-	if (index < params.size()) {
-		return params[index].currentValue;
+	if (0 < index && index <= params.size()) {
+		return params[index-1].currentValue;
 	} else {
 		return 0.0f;
 	}
@@ -131,7 +140,7 @@ void Source::setFragmentShader(std::string fShader)
 void Source::addParam(Param param)
 {
 	params.push_back(param);
-	SetParamInfof(params.size()-1, param.name.c_str(), param.type);
+	SetParamInfof(params.size(), param.name.c_str(), param.type);
 }
 
 void Source::addColorParam(std::string name)
