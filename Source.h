@@ -46,4 +46,5 @@ private:
 	ffglex::FFGLScreenQuad quad;
 	float lastUpdate;
 	Audio audio;
+	float resolution[2];
 };

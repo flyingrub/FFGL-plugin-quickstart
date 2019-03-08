@@ -3,7 +3,8 @@ using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;
 
-static std::string vertexShaderCode = R"(#version 410 core
+static std::string vertexShaderCode = R"(
+#version 410 core
 layout( location = 0 ) in vec4 vPosition;
 layout( location = 1 ) in vec2 vUV;
 
@@ -20,6 +21,7 @@ static std::string fragmentShaderCodeStart = R"(
 #version 410 core
 in vec2 uv;
 out vec4 fragColor;
+uniform vec2 resolution;
 uniform float time;
 uniform float deltaTime;
 uniform float audioVolume;
@@ -38,6 +40,8 @@ Source::~Source()
 
 FFResult Source::InitGL(const FFGLViewportStruct * vp)
 {
+	resolution[0] = vp->width;
+	resolution[1] = vp->height;
 	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i = 0;
 	while (i < params.size()) {
@@ -94,6 +98,8 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	lastUpdate = timeNow;
 	glUniform1f(shader.FindUniform("time"), timeNow);
 	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
+
+	glUniform2f(shader.FindUniform("resolution"), resolution[0], resolution[1]);
 
 	std::vector< float > fftData(Audio::getBufferSize());
 	const ParamInfo* fftInfo = FindParamInfo(FFT_INPUT_INDEX);
