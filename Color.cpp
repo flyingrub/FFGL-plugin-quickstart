@@ -31,14 +31,14 @@ void main()
 		m_uv+=p/l*(sin(z)+1.)*abs(sin(l*9.-z*2.));
 		c[i]=.01/length(abs(mod(m_uv,1.)-.5));
 	}
-	fragColor=vec4(c/l,t);
+	fragColor=vec4(c/l*color,t);
 }
 )";
 
-Color::Color()
+Color::Color() : Plugin(PluginType::SOURCE)
 {
 	setFragmentShader(fShader);
-	addColorParam("u_color");
+	addColorParam("color");
 }
 
 Color::~Color()

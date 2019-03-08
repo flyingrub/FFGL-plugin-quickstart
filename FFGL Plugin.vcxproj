@@ -14,14 +14,14 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="lib\FFGLSDK.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="lib\FFGLSDK.h" />
-    <ClInclude Include="Source.h" />
+    <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{71974ed2-465b-4d90-b584-ff7c4aaf3c53}</ProjectGuid>

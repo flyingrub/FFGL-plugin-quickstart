@@ -3,14 +3,14 @@
   <ItemGroup>
     <ClCompile Include="lib\FFGLSDK.cpp" />
     <ClCompile Include="Color.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\FFGLSDK.h" />
     <ClInclude Include="Color.h" />
-    <ClInclude Include="Source.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Plugin.h" />
   </ItemGroup>
 </Project>

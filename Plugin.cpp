@@ -1,44 +1,48 @@
-#include "Source.h"
+#include "Plugin.h"
 using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;
 
-static std::string vertexShaderCode = R"(
-#version 410 core
-layout( location = 0 ) in vec4 vPosition;
-layout( location = 1 ) in vec2 vUV;
-
-out vec2 uv;
-
-void main()
+Plugin::Plugin(PluginType type)
 {
-	gl_Position = vPosition;
-	uv = vUV;
+	if (type == PluginType::SOURCE) {
+		SetMinInputs(0);
+		SetMaxInputs(0);
+		SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
+		fragmentShaderCodeStart += R"(
+			in vec2 uv;
+		)";
+	} else if (type == PluginType::EFFECT) {
+		SetMinInputs(1);
+		SetMaxInputs(1);
+		SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
+		fragmentShaderCodeStart += R"(
+			in vec2 uv;
+			uniform vec2 MaxUV;
+
+			uniform sampler2D inputTexture;
+		)";
+	} else  if (type == PluginType::MIXER) {
+		SetMinInputs(2);
+		SetMaxInputs(2);
+		fragmentShaderCodeStart += R"(
+			uniform sampler2D textureDest;
+			uniform sampler2D textureSrc;
+			//the value defined by the slider to switch between the two images
+			uniform float mixVal;
+
+			in vec2 uvDest;
+			in vec2 uvSrc;
+		)";
+	}
+
 }
-)";
 
-static std::string fragmentShaderCodeStart = R"(
-#version 410 core
-in vec2 uv;
-out vec4 fragColor;
-uniform vec2 resolution;
-uniform float time;
-uniform float deltaTime;
-uniform float audioVolume;
-)";
-
-Source::Source()
+Plugin::~Plugin()
 {
-	SetMinInputs(0);
-	SetMaxInputs(0);
-	SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
 }
 
-Source::~Source()
-{
-}
-
-FFResult Source::InitGL(const FFGLViewportStruct * vp)
+FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 {
 	resolution[0] = vp->width;
 	resolution[1] = vp->height;
@@ -54,6 +58,14 @@ FFResult Source::InitGL(const FFGLViewportStruct * vp)
 		}
 	}
 	fragmentShaderCode += fragmentShader;
+	std::string vertexShaderCode;
+	if (type == PluginType::MIXER) {
+		vertexShaderCode = vertexShaderCodeMixer;
+	} else if (type == PluginType::SOURCE) {
+		vertexShaderCode = vertexShaderCodeSource;
+	} else if (type == PluginType::EFFECT) {
+		vertexShaderCode = vertexShaderCodeEffect;
+	}
 
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
@@ -65,11 +77,15 @@ FFResult Source::InitGL(const FFGLViewportStruct * vp)
 		DeInitGL();
 		return FF_FAIL;
 	}
+
+	if (type == PluginType::EFFECT) {
+		glUniform1i(shader.FindUniform("inputTexture"), 0);
+	}
 	return CFreeFrameGLPlugin::InitGL(vp);
 
 }
 
-FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
+FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
 	int i = 0;
@@ -108,19 +124,32 @@ FFResult Source::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	audio.update(fftData);
 	glUniform1f(shader.FindUniform("audioVolume"), audio.getCurrentVolume());
 
+	if (type == PluginType::MIXER) {
+		//TODO
+	} else if (type == PluginType::EFFECT) {
+		FFGLTextureStruct& Texture = *(pGL->inputTextures[0]);
+
+		//The input texture's dimension might change each frame and so might the content area.
+		//We're adopting the texture's maxUV using a uniform because that way we dont have to update our vertex buffer each frame.
+		FFGLTexCoords maxCoords = GetMaxGLTexCoords(Texture);
+		glUniform2f(shader.FindUniform("maxUV"), maxCoords.s, maxCoords.t);
+		ScopedSamplerActivation activateSampler(0);
+		Scoped2DTextureBinding textureBinding(Texture.Handle);
+	}
+
 	quad.Draw();
 
 	return FF_SUCCESS;
 }
 
-FFResult Source::DeInitGL()
+FFResult Plugin::DeInitGL()
 {
 	shader.FreeGLResources();
 	quad.Release();
 	return FF_SUCCESS;
 }
 
-FFResult Source::SetFloatParameter(unsigned int index, float value)
+FFResult Plugin::SetFloatParameter(unsigned int index, float value)
 {
 	if (index == FFT_INPUT_INDEX) return FF_SUCCESS;
 	if (index <= params.size()) {
@@ -131,7 +160,7 @@ FFResult Source::SetFloatParameter(unsigned int index, float value)
 	}
 }
 
-float Source::GetFloatParameter(unsigned int index)
+float Plugin::GetFloatParameter(unsigned int index)
 {
 	if (0 < index && index <= params.size()) {
 		return params[index-1].currentValue;
@@ -140,25 +169,25 @@ float Source::GetFloatParameter(unsigned int index)
 	}
 }
 
-void Source::setFragmentShader(std::string fShader)
+void Plugin::setFragmentShader(std::string fShader)
 {
 	fragmentShader = fShader;
 }
 
-void Source::addParam(Param param)
+void Plugin::addParam(Param param)
 {
 	params.push_back(param);
 	SetParamInfof(params.size(), param.name.c_str(), param.type);
 }
 
-void Source::addColorParam(std::string name)
+void Plugin::addColorParam(std::string name)
 {
 	addParam(Param(name, FF_TYPE_HUE));
 	addParam(Param(name, FF_TYPE_SATURATION,1.0));
 	addParam(Param(name, FF_TYPE_BRIGHTNESS,1.0));
 }
 
-bool Source::isColor(int index)
+bool Plugin::isColor(int index)
 {
 	bool enoughSpace = index + 2 < params.size();
 	if (!enoughSpace) return false;
