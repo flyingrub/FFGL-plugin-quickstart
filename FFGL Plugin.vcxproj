@@ -11,25 +11,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AddSubtract.cpp" />
-    <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="Color.cpp" />
-    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="lib\FFGLSDK.cpp" />
-    <ClCompile Include="Mixer.cpp" />
-    <ClCompile Include="Plugin.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="src\api\Effect.cpp" />
+    <ClCompile Include="src\api\Mixer.cpp" />
+    <ClCompile Include="src\api\Plugin.cpp" />
+    <ClCompile Include="src\api\Source.cpp" />
+    <ClCompile Include="src\examples\Add.cpp" />
+    <ClCompile Include="src\examples\AddSubtract.cpp" />
+    <ClCompile Include="src\examples\Color.cpp" />
+    <ClCompile Include="src\helpers\Audio.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AddSubtract.h" />
-    <ClInclude Include="Audio.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="Effect.h" />
-    <ClInclude Include="Mixer.h" />
-    <ClInclude Include="Source.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="lib\FFGLSDK.h" />
-    <ClInclude Include="Plugin.h" />
+    <ClCompile Include="lib\FFGLSDK.h" />
+    <ClInclude Include="src\api\Effect.h" />
+    <ClInclude Include="src\api\Mixer.h" />
+    <ClInclude Include="src\api\Plugin.h" />
+    <ClInclude Include="src\api\Source.h" />
+    <ClInclude Include="src\examples\Add.h" />
+    <ClInclude Include="src\examples\AddSubtract.h" />
+    <ClInclude Include="src\examples\Color.h" />
+    <ClInclude Include="src\helpers\Audio.h" />
+    <ClInclude Include="src\helpers\Utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{71974ed2-465b-4d90-b584-ff7c4aaf3c53}</ProjectGuid>
@@ -84,6 +86,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>lib\;lib\ffgl\utilities\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

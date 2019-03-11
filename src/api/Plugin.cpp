@@ -1,5 +1,5 @@
 #include "Plugin.h"
-#include "Utils.h"
+#include "../helpers/Utils.h"
 using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;

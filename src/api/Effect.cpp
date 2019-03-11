@@ -1,8 +1,6 @@
 #include "Effect.h"
 using namespace ffglex;
 
-
-
 Effect::Effect()
 {
 	SetMinInputs(1);
@@ -44,6 +42,9 @@ FFResult Effect::InitGL(const FFGLViewportStruct * vp)
 
 FFResult Effect::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
+	if (pGL->numInputTextures < 1) return FF_FAIL;
+	if (pGL->inputTextures[0] == NULL) return FF_FAIL;
+
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
 
 	FFGLTextureStruct& Texture = *(pGL->inputTextures[0]);

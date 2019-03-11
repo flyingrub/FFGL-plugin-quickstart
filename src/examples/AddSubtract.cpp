@@ -1,17 +1,6 @@
 #include "AddSubtract.h"
 
-static CFFGLPluginInfo infos(
-	PluginFactory< AddSubtract >,			// Create method
-	"SX01",							// Plugin unique ID
-	"AddSubstract EX",						// Plugin name
-	2,								// API major version number
-	1,								// API minor version number
-	1,								// Plugin major version number
-	000,							// Plugin minor version number
-	FF_EFFECT,						// Plugin type
-	"Sample FFGL Source plugin",	// Plugin description
-	"Resolume FFGL Example"			// About
-);
+
 
 std::string efShaderMain = R"(
 void main()

@@ -1,5 +1,5 @@
 #pragma once
-#include "Effect.h"
+#include "../api/Effect.h"
 class AddSubtract :
 	public Effect
 {
