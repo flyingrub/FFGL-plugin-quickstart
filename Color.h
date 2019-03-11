@@ -1,7 +1,7 @@
 #pragma once
-#include "Plugin.h"
+#include "Source.h"
 
-class Color : public Plugin
+class Color : public Source
 {
 public:
 	Color();

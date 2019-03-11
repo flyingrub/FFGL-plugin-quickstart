@@ -22,14 +22,10 @@ public:
 		currentValue(currentVal) {}
 };
 
-enum PluginType {
-	SOURCE, EFFECT, MIXER
-};
-
 class Plugin : public CFreeFrameGLPlugin
 {
 public:
-	Plugin(PluginType type);
+	Plugin();
 	~Plugin();
 	
 	FFResult InitGL(const FFGLViewportStruct* vp) override;
@@ -41,10 +37,12 @@ public:
 	
 	void setFragmentShader(std::string fShader);
 	void addParam(Param p);
-	void addColorParam(std::string name);
-	bool isColor(int index);
-private:
-	PluginType type;
+	void addParam(std::string name);
+	void addHueColorParam(std::string name);
+	void addRGBColorParam(std::string name);
+	bool isHueColor(int index);
+	bool isRGBColor(int index);
+protected:
 	std::string fragmentShader;
 	std::vector<Param> params;
 	ffglex::FFGLShader shader;
@@ -61,46 +59,5 @@ private:
 		uniform float deltaTime;
 		uniform float audioVolume;
 	)";
-
-	std::string vertexShaderCodeSource = R"(
-		#version 410 core
-		layout( location = 0 ) in vec4 vPosition;
-		layout( location = 1 ) in vec2 vUV;
-
-		out vec2 uv;
-
-		void main()
-		{
-			gl_Position = vPosition;
-			uv = vUV;
-		}
-	)";
-	std::string vertexShaderCodeEffect = R"(
-		#version 410 core
-		uniform vec2 maxUV;
-
-		layout( location = 0 ) in vec4 vPosition;
-		layout( location = 1 ) in vec2 vUV;
-
-		out vec2 uv;
-
-		void main()
-		{
-			gl_Position = vPosition;
-			uv = vUV * maxUV;
-		}
-	)";
-	std::string vertexShaderCodeMixer = R"(
-		#version 410 core
-		layout( location = 0 ) in vec4 vPosition;
-		layout( location = 1 ) in vec2 vUV;
-
-		out vec2 uv;
-
-		void main()
-		{
-			gl_Position = vPosition;
-			uv = vUV;
-		}
-	)";
+	std::string vertexShaderCode;
 };

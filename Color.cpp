@@ -1,19 +1,7 @@
 #include "Color.h"
 
-static CFFGLPluginInfo infos(
-	PluginFactory< Color >,			// Create method
-	"SX01",							// Plugin unique ID
-	"Color",						// Plugin name
-	2,								// API major version number
-	1,								// API minor version number
-	1,								// Plugin major version number
-	000,							// Plugin minor version number
-	FF_SOURCE,						// Plugin type
-	"Sample FFGL Source plugin",	// Plugin description
-	"Resolume FFGL Example"			// About
-);
 
-std::string fShader = R"(
+std::string fShaderMain = R"(
 void main()
 {
 	float t = time;
@@ -35,10 +23,10 @@ void main()
 }
 )";
 
-Color::Color() : Plugin(PluginType::SOURCE)
+Color::Color()
 {
-	setFragmentShader(fShader);
-	addColorParam("color");
+	setFragmentShader(fShaderMain);
+	addHueColorParam("color");
 }
 
 Color::~Color()

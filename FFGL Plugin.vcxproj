@@ -11,14 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddSubtract.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="lib\FFGLSDK.cpp" />
+    <ClCompile Include="Mixer.cpp" />
     <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddSubtract.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="Mixer.h" />
+    <ClInclude Include="Source.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="lib\FFGLSDK.h" />
     <ClInclude Include="Plugin.h" />

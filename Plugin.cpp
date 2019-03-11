@@ -1,41 +1,12 @@
 #include "Plugin.h"
+#include "Utils.h"
 using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;
 
-Plugin::Plugin(PluginType type)
+Plugin::Plugin()
 {
-	if (type == PluginType::SOURCE) {
-		SetMinInputs(0);
-		SetMaxInputs(0);
-		SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
-		fragmentShaderCodeStart += R"(
-			in vec2 uv;
-		)";
-	} else if (type == PluginType::EFFECT) {
-		SetMinInputs(1);
-		SetMaxInputs(1);
-		SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
-		fragmentShaderCodeStart += R"(
-			in vec2 uv;
-			uniform vec2 MaxUV;
-
-			uniform sampler2D inputTexture;
-		)";
-	} else  if (type == PluginType::MIXER) {
-		SetMinInputs(2);
-		SetMaxInputs(2);
-		fragmentShaderCodeStart += R"(
-			uniform sampler2D textureDest;
-			uniform sampler2D textureSrc;
-			//the value defined by the slider to switch between the two images
-			uniform float mixVal;
-
-			in vec2 uvDest;
-			in vec2 uvSrc;
-		)";
-	}
-
+	SetBufferParamInfo(FFT_INPUT_INDEX, "FFT", Audio::getBufferSize(), FF_USAGE_FFT);
 }
 
 Plugin::~Plugin()
@@ -49,7 +20,7 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i = 0;
 	while (i < params.size()) {
-		if (isColor(i)) {
+		if (isRGBColor(i) || isHueColor(i)) {
 			fragmentShaderCode += "uniform vec3 " + params[i].name + ";\n";
 			i += 3;
 		} else {
@@ -58,14 +29,6 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 		}
 	}
 	fragmentShaderCode += fragmentShader;
-	std::string vertexShaderCode;
-	if (type == PluginType::MIXER) {
-		vertexShaderCode = vertexShaderCodeMixer;
-	} else if (type == PluginType::SOURCE) {
-		vertexShaderCode = vertexShaderCodeSource;
-	} else if (type == PluginType::EFFECT) {
-		vertexShaderCode = vertexShaderCodeEffect;
-	}
 
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
@@ -78,9 +41,6 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 		return FF_FAIL;
 	}
 
-	if (type == PluginType::EFFECT) {
-		glUniform1i(shader.FindUniform("inputTexture"), 0);
-	}
 	return CFreeFrameGLPlugin::InitGL(vp);
 
 }
@@ -88,9 +48,17 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
+
 	int i = 0;
 	while (i < params.size()) {
-		if (isColor(i)) {
+		if (isRGBColor(i)) {
+			std::string name = params[i].name;
+			float r = params[i].currentValue;
+			float g = params[i + 1].currentValue;
+			float b = params[i + 2].currentValue;
+			glUniform3f(shader.FindUniform(name.c_str()), r,g,b);
+			i += 3;
+		} else if (isHueColor(i)) {
 			float rgb[3];
 			std::string name = params[i].name;
 			float hue = params[i].currentValue;
@@ -123,19 +91,6 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 		fftData[index] = fftInfo->elements[index].value;
 	audio.update(fftData);
 	glUniform1f(shader.FindUniform("audioVolume"), audio.getCurrentVolume());
-
-	if (type == PluginType::MIXER) {
-		//TODO
-	} else if (type == PluginType::EFFECT) {
-		FFGLTextureStruct& Texture = *(pGL->inputTextures[0]);
-
-		//The input texture's dimension might change each frame and so might the content area.
-		//We're adopting the texture's maxUV using a uniform because that way we dont have to update our vertex buffer each frame.
-		FFGLTexCoords maxCoords = GetMaxGLTexCoords(Texture);
-		glUniform2f(shader.FindUniform("maxUV"), maxCoords.s, maxCoords.t);
-		ScopedSamplerActivation activateSampler(0);
-		Scoped2DTextureBinding textureBinding(Texture.Handle);
-	}
 
 	quad.Draw();
 
@@ -180,14 +135,26 @@ void Plugin::addParam(Param param)
 	SetParamInfof(params.size(), param.name.c_str(), param.type);
 }
 
-void Plugin::addColorParam(std::string name)
+void Plugin::addParam(std::string name)
+{
+	addParam(Param(name));
+}
+
+void Plugin::addHueColorParam(std::string name)
 {
 	addParam(Param(name, FF_TYPE_HUE));
 	addParam(Param(name, FF_TYPE_SATURATION,1.0));
 	addParam(Param(name, FF_TYPE_BRIGHTNESS,1.0));
 }
 
-bool Plugin::isColor(int index)
+void Plugin::addRGBColorParam(std::string name)
+{
+	addParam(Param(name, FF_TYPE_RED));
+	addParam(Param(name, FF_TYPE_GREEN));
+	addParam(Param(name, FF_TYPE_BLUE));
+}
+
+bool Plugin::isHueColor(int index)
 {
 	bool enoughSpace = index + 2 < params.size();
 	if (!enoughSpace) return false;
@@ -195,6 +162,23 @@ bool Plugin::isColor(int index)
 		params[index].type == FF_TYPE_HUE &&
 		params[index + 1].type == FF_TYPE_SATURATION &&
 		params[index + 2].type == FF_TYPE_BRIGHTNESS;
+	if (!isColorType) return false;
+
+	bool isSameName =
+		params[index].name.compare(params[index + 1].name) == 0 &&
+		params[index].name.compare(params[index + 2].name) == 0;
+
+	return isSameName;
+}
+
+bool Plugin::isRGBColor(int index)
+{
+	bool enoughSpace = index + 2 < params.size();
+	if (!enoughSpace) return false;
+	bool isColorType =
+		params[index].type == FF_TYPE_RED &&
+		params[index + 1].type == FF_TYPE_GREEN &&
+		params[index + 2].type == FF_TYPE_BLUE;
 	if (!isColorType) return false;
 
 	bool isSameName =
