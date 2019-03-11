@@ -1,7 +1,5 @@
 #include "Source.h"
 
-
-
 Source::Source()
 {
 	SetMinInputs(0);
@@ -23,7 +21,6 @@ Source::Source()
 		}
 	)";
 }
-
 
 Source::~Source()
 {

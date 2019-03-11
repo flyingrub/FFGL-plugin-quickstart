@@ -6,7 +6,16 @@ class Mixer :
 public:
 	Mixer();
 	~Mixer();
+
+	template<typename PluginType>
+	static PluginInstance createPlugin(PluginInfo infos);
+
 	FFResult InitGL(const FFGLViewportStruct * vp) override;
 	FFResult ProcessOpenGL(ProcessOpenGLStruct * pGL) override;
 };
 
+template<typename PluginType>
+inline PluginInstance Mixer::createPlugin(PluginInfo infos)
+{
+	return Plugin::createPlugin<PluginType>(infos, FF_EFFECT);
+}

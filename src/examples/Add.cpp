@@ -1,16 +1,10 @@
 #include "Add.h"
-static CFFGLPluginInfo infos(
-	PluginFactory< Add >,			// Create method
-	"SX01",							// Plugin unique ID
-	"AddEX",						// Plugin name
-	2,								// API major version number
-	1,								// API minor version number
-	1,								// Plugin major version number
-	000,							// Plugin minor version number
-	FF_EFFECT,						// Plugin type
-	"Sample FFGL Source plugin",	// Plugin description
-	"Resolume FFGL Example"			// About
-);
+
+static PluginInstance p = Mixer::createPlugin<Add>({
+	"SX01", // plugin unique ID
+	"ADDEX" // Plugin name
+});
+
 std::string mfFragShader = R"(
 void main()
 {
@@ -30,7 +24,6 @@ Add::Add()
 {
 	setFragmentShader(mfFragShader);
 }
-
 
 Add::~Add()
 {

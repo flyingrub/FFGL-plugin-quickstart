@@ -5,7 +5,6 @@ Mixer::Mixer()
 {
 	SetMinInputs(2);
 	SetMaxInputs(2);
-	addParam("mixVal");
 	fragmentShaderCodeStart += R"(
 		uniform sampler2D textureDest;
 		uniform sampler2D textureSrc;
@@ -30,8 +29,8 @@ Mixer::Mixer()
 			uvSrc = vUV * maxUVSrc;
 		}
 	)";
+	addParam("mixVal");
 }
-
 
 Mixer::~Mixer()
 {
