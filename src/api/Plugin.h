@@ -24,6 +24,7 @@ public:
 	FFUInt32 type;
 	float currentValue;
 	std::vector<Option> options; // Used only when type is Option
+	std::vector<char> text = { 0 }; // Used only when type is Text
 
 	Param() : Param ("", FF_TYPE_STANDARD) {}
 
@@ -55,7 +56,9 @@ public:
 
 	FFResult SetFloatParameter(unsigned int dwIndex, float value) override;
 	float GetFloatParameter(unsigned int index) override;
-	
+	FFResult SetTextParameter(unsigned int index, const char* value) override;
+	char* GetTextParameter(unsigned int index) override;
+
 	void setFragmentShader(std::string fShader);
 	void addParam(Param p);
 	void addParam(std::string name);
@@ -63,6 +66,7 @@ public:
 	void addBoolParam(std::string name);
 	void addButtonParam(std::string name);
 	void addOptionParam(Param param);
+	void addTextParam(std::string name);
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);

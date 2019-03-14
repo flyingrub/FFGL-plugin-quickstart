@@ -52,6 +52,7 @@ Color::Color()
 	addHueColorParam("color");
 	addParam("iSize", 1);
 	addParam("iShiftAmount",0.5);
+	addParam("smoothness", 0.5);
 	addButtonParam("change");
 	addBoolParam("placed");
 	Param optionParam = Param("select", FF_TYPE_OPTION, 3.0f);
@@ -61,6 +62,7 @@ Color::Color()
 		{"option 3", 3.0f},
 	};
 	addOptionParam(optionParam);
+	addTextParam("test");
 }
 
 void Color::update() {

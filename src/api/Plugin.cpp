@@ -1,5 +1,4 @@
 #include "Plugin.h"
-
 using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;
@@ -138,6 +137,28 @@ float Plugin::GetFloatParameter(unsigned int index)
 	}
 }
 
+FFResult Plugin::SetTextParameter(unsigned int index, const char * value)
+{
+	if (0 < index && index <= params.size()) {
+		std::string temp = value == nullptr ? "" : value;
+		params[index - 1].text.clear();
+		params[index - 1].text.insert(params[index - 1].text.begin(), temp.begin(), temp.end());
+		params[index - 1].text.push_back(0);
+		return FF_SUCCESS;
+	} else {
+		return FF_FAIL;
+	}
+}
+
+char * Plugin::GetTextParameter(unsigned int index)
+{
+	if (0 < index && index <= params.size()) {
+		return params[index - 1].text.data();
+	} else {
+		return "";
+	}
+}
+
 void Plugin::setFragmentShader(std::string fShader)
 {
 	fragmentShader = fShader;
@@ -179,6 +200,11 @@ void Plugin::addOptionParam(Param param)
 	for (int i = 0; i < param.options.size(); i++) {
 		SetParamElementInfo(index, i, param.options[i].name.c_str(), param.options[i].value);
 	}
+}
+
+void Plugin::addTextParam(std::string name)
+{
+	addParam(Param(name, FF_TYPE_TEXT));
 }
 
 void Plugin::addHueColorParam(std::string name)
