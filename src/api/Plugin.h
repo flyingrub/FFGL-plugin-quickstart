@@ -49,6 +49,7 @@ public:
 	void setFragmentShader(std::string fShader);
 	void addParam(Param p);
 	void addParam(std::string name);
+	void addParam(std::string name, float defaultValue);
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);
@@ -70,6 +71,9 @@ protected:
 		uniform float time;
 		uniform float deltaTime;
 		uniform float audioVolume;
+		uniform float audioBass;
+		uniform float audioMed;
+		uniform float audioHigh;
 	)";
 	std::string vertexShaderCode;
 };
@@ -85,7 +89,7 @@ inline PluginInstance Plugin::createPlugin(PluginInfo infos, FFUInt32 type)
 		1,								// API minor version number
 		infos.majorVersion,				// Plugin major version number
 		infos.minorVersion,				// Plugin minor version number
-		type,						// Plugin type
+		type,							// Plugin type
 		infos.description.c_str(),		// Plugin description
 		infos.about.c_str()				// About
 	);

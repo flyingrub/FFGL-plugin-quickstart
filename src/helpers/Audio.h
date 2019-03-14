@@ -2,7 +2,7 @@
 #include <FFGLSDK.h>
 #include "Utils.h"
 
-static const int BUFFER_SIZE = 256;
+static const int BUFFER_SIZE = 512;
 
 class Audio
 {
@@ -10,12 +10,16 @@ public:
 	Audio();
 	~Audio();
 	void update(std::vector<float> fft);
-	float getCurrentVolume();
-	float getCurrentVolumeFromTo(int fromFreq, int toFreq);
+	float getVolume();
+	float getBass();
+	float getMed();
+	float getHigh();
+	float getVolumeFromTo(int fromFreq, int toFreq);
 
 	static int getBufferSize();
 private:
 	std::vector<float> fft;
-	utils::SmoothValue currentVol;
+	utils::SmoothValue vol, bass, med, high;
+	float freqMin, freqMax, freqBinStep;
 };
 

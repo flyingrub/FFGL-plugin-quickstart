@@ -1,10 +1,9 @@
 #include "Plugin.h"
 #include "../helpers/Utils.h"
-#include "Source.h"
+
 using namespace ffglex;
 
 static const int FFT_INPUT_INDEX = 0;
-
 
 Plugin::Plugin()
 {
@@ -92,7 +91,10 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	for (size_t index = 0; index < Audio::getBufferSize(); ++index)
 		fftData[index] = fftInfo->elements[index].value;
 	audio.update(fftData);
-	glUniform1f(shader.FindUniform("audioVolume"), audio.getCurrentVolume());
+	glUniform1f(shader.FindUniform("audioVolume"), audio.getVolume());
+	glUniform1f(shader.FindUniform("audioBass"), audio.getBass());
+	glUniform1f(shader.FindUniform("audioMed"), audio.getMed());
+	glUniform1f(shader.FindUniform("audioHigh"), audio.getHigh());
 
 	quad.Draw();
 
@@ -142,9 +144,15 @@ void Plugin::addParam(std::string name)
 	addParam(Param(name));
 }
 
+void Plugin::addParam(std::string name, float defaultValue)
+{
+	addParam(Param(name, FF_TYPE_STANDARD, defaultValue));
+
+}
+
 void Plugin::addHueColorParam(std::string name)
 {
-	addParam(Param(name, FF_TYPE_HUE));
+	addParam(Param(name, FF_TYPE_HUE,0.5));
 	addParam(Param(name, FF_TYPE_SATURATION,1.0));
 	addParam(Param(name, FF_TYPE_BRIGHTNESS,1.0));
 }

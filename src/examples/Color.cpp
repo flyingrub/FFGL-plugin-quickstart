@@ -1,25 +1,57 @@
 #include "Color.h"
 
+static PluginInstance p = Source::createPlugin<Color>({
+	"SX01", // plugin unique ID
+	"ADDEX" // Plugin name
+});
 
 std::string fShaderMain = R"(
+#define PI 3.14159265359
+#define TWO_PI 6.28318530718
+
+float random (vec2 st) {
+    return fract(sin(dot(st.xy,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+}
+
+float random(float seed, float min, float max) {
+	return floor(min + random(vec2(seed)) * (max/min));
+}
+
+vec2 rotate2D(vec2 _uv, float _angle){
+    _uv =  mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle)) * _uv;
+    return _uv;
+}
+
+float polygon(vec2 _uv, float size, float width, float sides) {
+	// Angle and radius from the current pixel
+	float a = atan(_uv.x,_uv.y)+PI;
+	float r = TWO_PI/float(sides);
+
+	// Shaping function that modulate the distance
+	float d = cos(floor(.5+a/r)*r-a)*length(_uv);
+
+	return 1.-smoothstep(size+width,size+width+0.005,d)-1.+smoothstep(size,size+0.005,d);
+}
+
+
 void main()
 {
-	float t = time;
-	vec2 r = resolution;
-	vec3 c;
-	float l;
-	float z=t;
-	for(int i=0;i<3;i++) {
-		vec2 m_uv = uv;
-		vec2 p=m_uv;
-		p-=.5;
-		p.x*=r.x/r.y;
-		z+=.07;
-		l=length(p);
-		m_uv+=p/l*(sin(z)+1.)*abs(sin(l*9.-z*2.));
-		c[i]=.01/length(abs(mod(m_uv,1.)-.5));
-	}
-	fragColor=vec4(c/l*color,t);
+    vec2 uv = fragCoord*2.-1.;
+	uv.x *= resolution.x/resolution.y;
+    uv = rotate2D(uv, time*0.1 +  audioVolume *20.);
+	
+    float seed = 8.; // = floor(audioBass * 5.);
+    float size = iSize/10. + iSize * audioVolume *60.;
+    float width = iSize/40. + iSize * audioVolume *20.;
+    float rgbShift = iShiftAmount * audioVolume *6.;
+    float colorR = polygon(uv-vec2(rgbShift,0),size,width, random(seed,3.,10.));
+    float colorG = polygon(uv,size,width, random(seed,3.,10.));
+    float colorB = polygon(uv+vec2(rgbShift,0),size,width, random(seed,3.,10.));
+	vec3 color = vec3(colorR, colorG, colorB);
+    fragColor = vec4(color,1.0);
 }
 )";
 
@@ -27,6 +59,8 @@ Color::Color()
 {
 	setFragmentShader(fShaderMain);
 	addHueColorParam("color");
+	addParam("iSize", 1);
+	addParam("iShiftAmount",0.5);
 }
 
 Color::~Color()

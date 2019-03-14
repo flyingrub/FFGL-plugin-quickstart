@@ -1,10 +1,5 @@
 #include "Add.h"
 
-static PluginInstance p = Mixer::createPlugin<Add>({
-	"SX01", // plugin unique ID
-	"ADDEX" // Plugin name
-});
-
 std::string mfFragShader = R"(
 void main()
 {

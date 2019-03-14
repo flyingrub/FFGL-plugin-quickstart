@@ -1,7 +1,5 @@
 #include "AddSubtract.h"
 
-
-
 std::string efShaderMain = R"(
 void main()
 {
