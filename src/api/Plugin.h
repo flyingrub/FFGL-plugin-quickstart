@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "../helpers/Audio.h"
+#include "../helpers/Utils.h"
 
 typedef CFFGLPluginInfo PluginInstance;
 
@@ -30,6 +31,11 @@ public:
 		currentValue(currentVal) {}
 };
 
+struct OptionParam {
+	Param p;
+	std::vector<std::string> options;
+};
+
 class Plugin : public CFreeFrameGLPlugin
 {
 public:
@@ -42,6 +48,9 @@ public:
 	FFResult InitGL(const FFGLViewportStruct* vp) override;
 	FFResult ProcessOpenGL(ProcessOpenGLStruct* pGL) override;
 	FFResult DeInitGL() override;
+	virtual void init() {};
+	virtual void update() {};
+	virtual void clean() {};
 
 	FFResult SetFloatParameter(unsigned int dwIndex, float value) override;
 	float GetFloatParameter(unsigned int index) override;
@@ -50,10 +59,14 @@ public:
 	void addParam(Param p);
 	void addParam(std::string name);
 	void addParam(std::string name, float defaultValue);
+	void addBoolParam(std::string name);
+	void addButtonParam(std::string name);
+	void addOptionParam()
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);
 	bool isRGBColor(int index);
+	Param getParam(std::string name);
 	
 protected:
 	std::string fragmentShader;
@@ -63,6 +76,7 @@ protected:
 	float lastUpdate;
 	Audio audio;
 	float resolution[2];
+	utils::Random random;
 
 	std::string fragmentShaderCodeStart = R"(
 		#version 410 core

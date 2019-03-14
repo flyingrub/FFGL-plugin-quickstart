@@ -8,16 +8,7 @@ static PluginInstance p = Source::createPlugin<Color>({
 std::string fShaderMain = R"(
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718
-
-float random (vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123);
-}
-
-float random(float seed, float min, float max) {
-	return floor(min + random(vec2(seed)) * (max/min));
-}
+uniform float sides;
 
 vec2 rotate2D(vec2 _uv, float _angle){
     _uv =  mat2(cos(_angle),-sin(_angle),
@@ -47,9 +38,9 @@ void main()
     float size = iSize/10. + iSize * audioVolume *60.;
     float width = iSize/40. + iSize * audioVolume *20.;
     float rgbShift = iShiftAmount * audioVolume *6.;
-    float colorR = polygon(uv-vec2(rgbShift,0),size,width, random(seed,3.,10.));
-    float colorG = polygon(uv,size,width, random(seed,3.,10.));
-    float colorB = polygon(uv+vec2(rgbShift,0),size,width, random(seed,3.,10.));
+    float colorR = polygon(uv-vec2(rgbShift,0), size, width, sides);
+    float colorG = polygon(uv, size, width, sides);
+    float colorB = polygon(uv+vec2(rgbShift,0), size, width, sides);
 	vec3 color = vec3(colorR, colorG, colorB);
     fragColor = vec4(color,1.0);
 }
@@ -61,6 +52,17 @@ Color::Color()
 	addHueColorParam("color");
 	addParam("iSize", 1);
 	addParam("iShiftAmount",0.5);
+	addButtonParam("change");
+	addBoolParam("placed");
+
+}
+
+void Color::update() {
+	Param change = getParam("change");
+	if (change.currentValue == 1) {
+		sides = random.getRandomInt(3, 10);
+	}
+	glUniform1f(shader.FindUniform("sides"), sides);
 }
 
 Color::~Color()

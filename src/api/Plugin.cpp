@@ -1,5 +1,4 @@
 #include "Plugin.h"
-#include "../helpers/Utils.h"
 
 using namespace ffglex;
 
@@ -23,14 +22,18 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 	while (i < params.size()) {
 		if (isRGBColor(i) || isHueColor(i)) {
 			fragmentShaderCode += "uniform vec3 " + params[i].name + ";\n";
-			i += 3;
+			i += 2;
+		} else if (params[i].type == FF_TYPE_BOOLEAN) {
+			fragmentShaderCode += "uniform bool " + params[i].name + ";\n";
+		} else if (params[i].type == FF_TYPE_EVENT) {
+			fragmentShaderCode += "uniform bool " + params[i].name + ";\n";
 		} else {
 			fragmentShaderCode += "uniform float " + params[i].name + ";\n";
-			i += 1;
 		}
+		i += 1;
 	}
 	fragmentShaderCode += fragmentShader;
-
+	init();
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
 		DeInitGL();
@@ -58,7 +61,7 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			float g = params[i + 1].currentValue;
 			float b = params[i + 2].currentValue;
 			glUniform3f(shader.FindUniform(name.c_str()), r,g,b);
-			i += 3;
+			i += 2;
 		} else if (isHueColor(i)) {
 			float rgb[3];
 			std::string name = params[i].name;
@@ -69,13 +72,19 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			hue = (hue == 1.0f) ? 0.0f : hue; 
 			HSVtoRGB(hue, saturation, brightness, rgb[0], rgb[1], rgb[2]);
 			glUniform3f(shader.FindUniform(name.c_str()), rgb[0], rgb[1], rgb[2]);
-			i += 3;
+			i += 2;
+		} if (params[i].type == FF_TYPE_BOOLEAN) {
+			std::string name = params[i].name;
+			glUniform1i(shader.FindUniform(name.c_str()), params[i].currentValue);
+		} else if (params[i].type == FF_TYPE_EVENT) {
+			std::string name = params[i].name;
+			glUniform1i(shader.FindUniform(name.c_str()), params[i].currentValue);
 		} else {
 			std::string name = params[i].name;
 			float val = params[i].currentValue;
 			glUniform1f(shader.FindUniform(name.c_str()), val);
-			i += 1;
 		}
+		i += 1;
 	}
 
 	float timeNow = getTicks() / 1000.0f;
@@ -95,7 +104,7 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	glUniform1f(shader.FindUniform("audioBass"), audio.getBass());
 	glUniform1f(shader.FindUniform("audioMed"), audio.getMed());
 	glUniform1f(shader.FindUniform("audioHigh"), audio.getHigh());
-
+	update();
 	quad.Draw();
 
 	return FF_SUCCESS;
@@ -103,6 +112,7 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 
 FFResult Plugin::DeInitGL()
 {
+	clean();
 	shader.FreeGLResources();
 	quad.Release();
 	return FF_SUCCESS;
@@ -148,6 +158,16 @@ void Plugin::addParam(std::string name, float defaultValue)
 {
 	addParam(Param(name, FF_TYPE_STANDARD, defaultValue));
 
+}
+
+void Plugin::addBoolParam(std::string name)
+{
+	addParam(Param(name, FF_TYPE_BOOLEAN));
+}
+
+void Plugin::addButtonParam(std::string name)
+{
+	addParam(Param(name, FF_TYPE_EVENT));
 }
 
 void Plugin::addHueColorParam(std::string name)
@@ -196,4 +216,12 @@ bool Plugin::isRGBColor(int index)
 		params[index].name.compare(params[index + 2].name) == 0;
 
 	return isSameName;
+}
+
+Param Plugin::getParam(std::string name)
+{
+	for (int i = 0; i < params.size(); i++) {
+		if (params[i].name.compare(name) == 0) return params[i];
+	}
+	return Param();
 }
