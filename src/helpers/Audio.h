@@ -15,6 +15,8 @@ public:
 	float getMed();
 	float getHigh();
 	float getVolumeFromTo(int fromFreq, int toFreq);
+	float toDb(float rms);
+	void setSmoothness(float smoothness);
 
 	static int getBufferSize();
 private:

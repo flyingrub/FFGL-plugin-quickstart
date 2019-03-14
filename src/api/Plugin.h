@@ -22,7 +22,7 @@ class Param {
 public:
 	std::string name;
 	FFUInt32 type;
-	float currentValue;
+	float value;
 	std::vector<Option> options; // Used only when type is Option
 	std::vector<char> text = { 0 }; // Used only when type is Text
 
@@ -35,7 +35,7 @@ public:
 	Param(std::string name, FFUInt32 type, float currentVal) :
 		name(name),
 		type(type),
-		currentValue(currentVal) {}
+		value(currentVal) {}
 };
 
 class Plugin : public CFreeFrameGLPlugin

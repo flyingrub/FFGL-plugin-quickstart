@@ -18,7 +18,7 @@ void Audio::update(std::vector<float> _fft)
 	float highStore = 0;
 
 	for (int i = 0; i < Audio::getBufferSize(); i++) {
-		float bin = fft[i];
+		float bin = fft[i] * fft[i];
 		
 		if (i < 10) bassStore += bin;
 		if (240 < i && i < 260) medStore += bin;
@@ -27,17 +27,20 @@ void Audio::update(std::vector<float> _fft)
 		currentVolStore += bin;
 	}
 	currentVolStore /= (float)Audio::getBufferSize();
-	//float rms = sqrt(currentVolStore);
-	//float db = 20 * std::log10(rms);
-	//db = utils::map(db, -50, -5, 0, 1);
-	//if (std::isinf(db)) db = 0;
-	vol.update(currentVolStore);
+	currentVolStore = sqrt(currentVolStore);
+	vol.update(toDb(currentVolStore));
+
 	bassStore /= 10.0f;
-	bass.update(bassStore);
+	bassStore = sqrt(bassStore);
+	bass.update(toDb(bassStore));
+
 	medStore /= 20.0f;
-	med.update(medStore);
+	medStore = sqrt(medStore);
+	med.update(toDb(medStore));
+
 	highStore /= 20.0f;
-	high.update(highStore);
+	highStore = sqrt(highStore);
+	high.update(toDb(highStore));
 }
 
 float Audio::getVolume()
@@ -64,6 +67,22 @@ float Audio::getHigh()
 float Audio::getVolumeFromTo(int fromFreq, int toFreq)
 {
 	return 0.0f;
+}
+
+float Audio::toDb(float rms)
+{
+	float db = 20 * std::log10(rms);
+	db = utils::map(db, -50, -3, 0, 1);
+	if (std::isinf(db)) db = 0;
+	return db;
+}
+
+void Audio::setSmoothness(float smoothness)
+{
+	vol.setSmoothness(smoothness);
+	bass.setSmoothness(smoothness);
+	med.setSmoothness(smoothness);
+	high.setSmoothness(smoothness);
 }
 
 int Audio::getBufferSize()

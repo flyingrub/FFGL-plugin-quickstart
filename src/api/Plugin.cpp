@@ -56,17 +56,17 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	while (i < params.size()) {
 		if (isRGBColor(i)) {
 			std::string name = params[i].name;
-			float r = params[i].currentValue;
-			float g = params[i + 1].currentValue;
-			float b = params[i + 2].currentValue;
+			float r = params[i].value;
+			float g = params[i + 1].value;
+			float b = params[i + 2].value;
 			glUniform3f(shader.FindUniform(name.c_str()), r,g,b);
 			i += 2;
 		} else if (isHueColor(i)) {
 			float rgb[3];
 			std::string name = params[i].name;
-			float hue = params[i].currentValue;
-			float saturation = params[i+1].currentValue;
-			float brightness = params[i+2].currentValue;
+			float hue = params[i].value;
+			float saturation = params[i+1].value;
+			float brightness = params[i+2].value;
 			//we need to make sure the hue doesn't reach 1.0f, otherwise the result will be pink and not red how it should be
 			hue = (hue == 1.0f) ? 0.0f : hue; 
 			HSVtoRGB(hue, saturation, brightness, rgb[0], rgb[1], rgb[2]);
@@ -74,13 +74,13 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			i += 2;
 		} if (params[i].type == FF_TYPE_BOOLEAN) {
 			std::string name = params[i].name;
-			glUniform1i(shader.FindUniform(name.c_str()), params[i].currentValue);
+			glUniform1i(shader.FindUniform(name.c_str()), params[i].value);
 		} else if (params[i].type == FF_TYPE_EVENT) {
 			std::string name = params[i].name;
-			glUniform1i(shader.FindUniform(name.c_str()), params[i].currentValue);
+			glUniform1i(shader.FindUniform(name.c_str()), params[i].value);
 		} else {
 			std::string name = params[i].name;
-			float val = params[i].currentValue;
+			float val = params[i].value;
 			glUniform1f(shader.FindUniform(name.c_str()), val);
 		}
 		i += 1;
@@ -121,7 +121,7 @@ FFResult Plugin::SetFloatParameter(unsigned int index, float value)
 {
 	if (index == FFT_INPUT_INDEX) return FF_SUCCESS;
 	if (index <= params.size()) {
-		params[index-1].currentValue = value;
+		params[index-1].value = value;
 		return FF_SUCCESS;
 	} else {
 		return FF_FAIL;
@@ -131,7 +131,7 @@ FFResult Plugin::SetFloatParameter(unsigned int index, float value)
 float Plugin::GetFloatParameter(unsigned int index)
 {
 	if (0 < index && index <= params.size()) {
-		return params[index-1].currentValue;
+		return params[index-1].value;
 	} else {
 		return 0.0f;
 	}
@@ -195,7 +195,7 @@ void Plugin::addOptionParam(Param param)
 {
 	params.push_back(param);
 	int index = params.size();
-	SetOptionParamInfo(index, param.name.c_str(), param.options.size(), param.currentValue);
+	SetOptionParamInfo(index, param.name.c_str(), param.options.size(), param.value);
 	
 	for (int i = 0; i < param.options.size(); i++) {
 		SetParamElementInfo(index, i, param.options[i].name.c_str(), param.options[i].value);
