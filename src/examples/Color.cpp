@@ -54,13 +54,20 @@ Color::Color()
 	addParam("iShiftAmount",0.5);
 	addButtonParam("change");
 	addBoolParam("placed");
-
+	Param optionParam = Param("select", FF_TYPE_OPTION, 3.0f);
+	optionParam.options = {
+		{"option 1", 1.0f},
+		{"option 2", 2.0f},
+		{"option 3", 3.0f},
+	};
+	addOptionParam(optionParam);
 }
 
 void Color::update() {
 	Param change = getParam("change");
 	if (change.currentValue == 1) {
 		sides = random.getRandomInt(3, 10);
+		sides = getParam("select").currentValue * 3;
 	}
 	glUniform1f(shader.FindUniform("sides"), sides);
 }

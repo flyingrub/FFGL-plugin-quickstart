@@ -170,6 +170,17 @@ void Plugin::addButtonParam(std::string name)
 	addParam(Param(name, FF_TYPE_EVENT));
 }
 
+void Plugin::addOptionParam(Param param)
+{
+	params.push_back(param);
+	int index = params.size();
+	SetOptionParamInfo(index, param.name.c_str(), param.options.size(), param.currentValue);
+	
+	for (int i = 0; i < param.options.size(); i++) {
+		SetParamElementInfo(index, i, param.options[i].name.c_str(), param.options[i].value);
+	}
+}
+
 void Plugin::addHueColorParam(std::string name)
 {
 	addParam(Param(name, FF_TYPE_HUE,0.5));

@@ -13,11 +13,17 @@ struct PluginInfo {
 	int minorVersion = 0;
 };
 
+struct Option {
+	std::string name;
+	float value;
+};
+
 class Param {
 public:
 	std::string name;
 	FFUInt32 type;
 	float currentValue;
+	std::vector<Option> options; // Used only when type is Option
 
 	Param() : Param ("", FF_TYPE_STANDARD) {}
 
@@ -29,11 +35,6 @@ public:
 		name(name),
 		type(type),
 		currentValue(currentVal) {}
-};
-
-struct OptionParam {
-	Param p;
-	std::vector<std::string> options;
 };
 
 class Plugin : public CFreeFrameGLPlugin
@@ -61,7 +62,7 @@ public:
 	void addParam(std::string name, float defaultValue);
 	void addBoolParam(std::string name);
 	void addButtonParam(std::string name);
-	void addOptionParam()
+	void addOptionParam(Param param);
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);
