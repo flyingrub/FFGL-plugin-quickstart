@@ -1,5 +1,10 @@
 #include "Add.h"
 
+static PluginInstance p = Mixer::createPlugin<Add>({
+	"FL03", // plugin unique ID
+	"Add FFGL" // Plugin name
+});
+
 std::string mfFragShader = R"(
 void main()
 {

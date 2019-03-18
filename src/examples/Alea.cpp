@@ -1,8 +1,8 @@
-#include "Color.h"
+#include "Alea.h"
 
-static PluginInstance p = Source::createPlugin<Color>({
-	"SX01", // plugin unique ID
-	"ADDEX" // Plugin name
+static PluginInstance p = Source::createPlugin<Alea>({
+	"FL01", // plugin unique ID
+	"ALEA" // Plugin name
 });
 
 std::string fShaderMain = R"(
@@ -46,7 +46,7 @@ void main()
 }
 )";
 
-Color::Color()
+Alea::Alea()
 {
 	setFragmentShader(fShaderMain);
 	addHueColorParam("color");
@@ -66,7 +66,7 @@ Color::Color()
 	addTextParam("test");
 }
 
-void Color::update() {
+void Alea::update() {
 	Param change = getParam("change");
 	
 	if (change.value == 1) {
@@ -92,6 +92,6 @@ void Color::update() {
 	audio.setSmoothness(smoothness.value);
 }
 
-Color::~Color()
+Alea::~Alea()
 {
 }

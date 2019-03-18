@@ -1,11 +1,11 @@
 #pragma once
 #include "../api/Source.h"
-class Color : public Source
+class Alea : public Source
 {
 public:
-	Color();
+	Alea();
 	void update() override;
-	~Color();
+	~Alea();
 private:
 	int sides = 5;
 };

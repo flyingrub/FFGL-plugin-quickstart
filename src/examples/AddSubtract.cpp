@@ -1,5 +1,10 @@
 #include "AddSubtract.h"
 
+static PluginInstance p = Effect::createPlugin<AddSubtract>({
+	"FL02", // plugin unique ID
+	"Add Subtract FFGL" // Plugin name
+});
+
 std::string efShaderMain = R"(
 void main()
 {

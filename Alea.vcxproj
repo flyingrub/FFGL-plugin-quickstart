@@ -16,9 +16,7 @@
     <ClCompile Include="src\api\Mixer.cpp" />
     <ClCompile Include="src\api\Plugin.cpp" />
     <ClCompile Include="src\api\Source.cpp" />
-    <ClCompile Include="src\examples\Add.cpp" />
-    <ClCompile Include="src\examples\AddSubtract.cpp" />
-    <ClCompile Include="src\examples\Color.cpp" />
+    <ClCompile Include="src\examples\Alea.cpp" />
     <ClCompile Include="src\helpers\Audio.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -27,9 +25,7 @@
     <ClInclude Include="src\api\Mixer.h" />
     <ClInclude Include="src\api\Plugin.h" />
     <ClInclude Include="src\api\Source.h" />
-    <ClInclude Include="src\examples\Add.h" />
-    <ClInclude Include="src\examples\AddSubtract.h" />
-    <ClInclude Include="src\examples\Color.h" />
+    <ClInclude Include="src\examples\Alea.h" />
     <ClInclude Include="src\helpers\Audio.h" />
     <ClInclude Include="src\helpers\Utils.h" />
   </ItemGroup>

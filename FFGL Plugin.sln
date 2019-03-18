@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FFGL Plugin", "FFGL Plugin.vcxproj", "{71974ED2-465B-4D90-B584-FF7C4AAF3C53}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Alea", "Alea.vcxproj", "{71974ED2-465B-4D90-B584-FF7C4AAF3C53}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Add", "Add.vcxproj", "{FC65EF1A-9029-40B9-B703-F1A8F563D458}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AddSubtract", "AddSubtract.vcxproj", "{0284B7B0-42F5-4790-8BE5-9D795A7E0680}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +19,19 @@ Global
 		{71974ED2-465B-4D90-B584-FF7C4AAF3C53}.Debug|x64.Build.0 = Debug|x64
 		{71974ED2-465B-4D90-B584-FF7C4AAF3C53}.Release|x64.ActiveCfg = Release|x64
 		{71974ED2-465B-4D90-B584-FF7C4AAF3C53}.Release|x64.Build.0 = Release|x64
+		{FC65EF1A-9029-40B9-B703-F1A8F563D458}.Debug|x64.ActiveCfg = Debug|x64
+		{FC65EF1A-9029-40B9-B703-F1A8F563D458}.Debug|x64.Build.0 = Debug|x64
+		{FC65EF1A-9029-40B9-B703-F1A8F563D458}.Release|x64.ActiveCfg = Release|x64
+		{FC65EF1A-9029-40B9-B703-F1A8F563D458}.Release|x64.Build.0 = Release|x64
+		{0284B7B0-42F5-4790-8BE5-9D795A7E0680}.Debug|x64.ActiveCfg = Debug|x64
+		{0284B7B0-42F5-4790-8BE5-9D795A7E0680}.Debug|x64.Build.0 = Debug|x64
+		{0284B7B0-42F5-4790-8BE5-9D795A7E0680}.Release|x64.ActiveCfg = Release|x64
+		{0284B7B0-42F5-4790-8BE5-9D795A7E0680}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7E28FAC0-23A7-4C28-9917-D60DBD5CA13F}
+		SolutionGuid = {1968B460-B1C5-40F7-B2DA-2314795F244F}
 	EndGlobalSection
 EndGlobal
