@@ -5,7 +5,7 @@ static PluginInstance p = Mixer::createPlugin<Add>({
 	"Add FFGL" // Plugin name
 });
 
-std::string mfFragShader = R"(
+static const std::string fshader = R"(
 void main()
 {
 	//get the two fragments to mix
@@ -22,7 +22,7 @@ void main()
 
 Add::Add()
 {
-	setFragmentShader(mfFragShader);
+	setFragmentShader(fshader);
 }
 
 Add::~Add()

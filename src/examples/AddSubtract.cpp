@@ -5,7 +5,7 @@ static PluginInstance p = Effect::createPlugin<AddSubtract>({
 	"Add Subtract FFGL" // Plugin name
 });
 
-std::string efShaderMain = R"(
+static const std::string fshader = R"(
 void main()
 {
 	vec4 color = texture(inputTexture, uv);
@@ -24,7 +24,7 @@ void main()
 
 AddSubtract::AddSubtract()
 {
-	setFragmentShader(efShaderMain);
+	setFragmentShader(fshader);
 	addRGBColorParam("brightness");
 }
 

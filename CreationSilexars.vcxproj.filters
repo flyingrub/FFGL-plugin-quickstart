@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="lib\FFGLSDK.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FFGLSDK.h">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\examples\Add.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\helpers\Audio.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Effect.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Mixer.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Plugin.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Source.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\examples\CreationSilexars.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\examples\Add.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\Audio.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Effect.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Mixer.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Plugin.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Source.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\Utils.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\examples\CreationSilexars.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{80cd77d1-9f6a-4fd1-960a-f106d29ec9f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api">
+      <UniqueIdentifier>{f0e1390a-e871-4074-a31f-112bbbf31a96}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

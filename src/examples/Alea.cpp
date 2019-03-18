@@ -5,7 +5,7 @@ static PluginInstance p = Source::createPlugin<Alea>({
 	"ALEA" // Plugin name
 });
 
-std::string fShaderMain = R"(
+static const std::string fshader = R"(
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718
 uniform float sides;
@@ -48,7 +48,7 @@ void main()
 
 Alea::Alea()
 {
-	setFragmentShader(fShaderMain);
+	setFragmentShader(fshader);
 	addHueColorParam("color");
 	addParam("iSize", 1);
 	addParam("iShiftAmount",0.5);
