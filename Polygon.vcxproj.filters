@@ -22,7 +22,7 @@
     <ClCompile Include="src\api\Source.cpp">
       <Filter>api</Filter>
     </ClCompile>
-    <ClCompile Include="src\examples\CreationSilexars.cpp" />
+    <ClCompile Include="src\examples\Polygon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\helpers\Audio.h">
@@ -43,14 +43,14 @@
     <ClInclude Include="src\helpers\Utils.h">
       <Filter>api</Filter>
     </ClInclude>
-    <ClInclude Include="src\examples\CreationSilexars.h" />
+    <ClInclude Include="src\examples\Polygon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lib">
-      <UniqueIdentifier>{80cd77d1-9f6a-4fd1-960a-f106d29ec9f8}</UniqueIdentifier>
+      <UniqueIdentifier>{1e011db8-1221-4d36-a40b-079909a3b1cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="api">
-      <UniqueIdentifier>{f0e1390a-e871-4074-a31f-112bbbf31a96}</UniqueIdentifier>
+      <UniqueIdentifier>{d7cdfaab-4991-43f9-bd9c-16d6d91fcd00}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
