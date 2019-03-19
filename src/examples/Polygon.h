@@ -4,6 +4,7 @@ class PolygonRepeat : public Source
 {
 public:
 	PolygonRepeat();
+	void update() override;
 	~PolygonRepeat();
 };
 

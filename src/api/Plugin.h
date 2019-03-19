@@ -18,11 +18,16 @@ struct Option {
 	float value;
 };
 
+struct Range {
+	float min = 0.0f, max = 1.0f;
+};
+
 class Param {
 public:
 	std::string name;
 	FFUInt32 type;
 	float value;
+	Range range;
 	std::vector<Option> options; // Used only when type is Option
 	std::vector<char> text = { 0 }; // Used only when type is Text
 
@@ -33,9 +38,21 @@ public:
 	Param(std::string name, FFUInt32 type) : Param(name, type, 0.0f) {}
 
 	Param(std::string name, FFUInt32 type, float currentVal) :
+		Param(name, type, currentVal, Range()) {}
+
+	Param(std::string name, float currentVal, Range range) : 
+		Param(name, FF_TYPE_STANDARD, currentVal, range) {}
+
+	Param(std::string name, FFUInt32 type, float currentVal, Range range) :
 		name(name),
 		type(type),
-		value(currentVal) {}
+		value(currentVal),
+		range(range) {}
+
+	float getValue() {
+		return utils::map(value, 0.0, 1.0, range.min, range.max);
+	}
+
 };
 
 class Plugin : public CFreeFrameGLPlugin
@@ -54,6 +71,7 @@ public:
 	virtual void update() {};
 	virtual void clean() {};
 
+	char* GetParameterDisplay(unsigned int index) override;
 	FFResult SetFloatParameter(unsigned int dwIndex, float value) override;
 	float GetFloatParameter(unsigned int index) override;
 	FFResult SetTextParameter(unsigned int index, const char* value) override;
