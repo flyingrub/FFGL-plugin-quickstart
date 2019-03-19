@@ -14,8 +14,6 @@ Plugin::~Plugin()
 
 FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 {
-	resolution[0] = vp->width;
-	resolution[1] = vp->height;
 	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i = 0;
 	while (i < params.size()) {
@@ -92,7 +90,7 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	glUniform1f(shader.FindUniform("time"), timeNow);
 	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
 
-	glUniform2f(shader.FindUniform("resolution"), resolution[0], resolution[1]);
+	glUniform2f(shader.FindUniform("resolution"), currentViewport.width, currentViewport.height);
 
 	std::vector< float > fftData(Audio::getBufferSize());
 	const ParamInfo* fftInfo = FindParamInfo(FFT_INPUT_INDEX);
