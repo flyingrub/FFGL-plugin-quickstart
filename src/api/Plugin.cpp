@@ -84,7 +84,8 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 		i += 1;
 	}
 	frame++;
-	float timeNow = getTicks() / 1000.0f;
+	auto t_now = std::chrono::high_resolution_clock::now();
+	float timeNow = std::chrono::duration<double, std::milli>(t_now - t_start).count() / 1000.0f;
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate = timeNow;
 	glUniform1f(shader.FindUniform("time"), timeNow);

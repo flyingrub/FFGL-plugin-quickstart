@@ -4,6 +4,7 @@
 #include <string>
 #include "../helpers/Audio.h"
 #include "../helpers/Utils.h"
+#include <chrono>
 
 typedef CFFGLPluginInfo PluginInstance;
 
@@ -98,6 +99,7 @@ protected:
 	ffglex::FFGLScreenQuad quad;
 	float lastUpdate = 0;
 	int frame = 0;
+	std::chrono::time_point<std::chrono::high_resolution_clock> t_start = std::chrono::high_resolution_clock::now();
 	Audio audio;
 	utils::Random random;
 
