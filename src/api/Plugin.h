@@ -96,9 +96,9 @@ protected:
 	std::vector<Param> params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
-	float lastUpdate;
+	float lastUpdate = 0;
+	int frame = 0;
 	Audio audio;
-	float resolution[2];
 	utils::Random random;
 
 	std::string fragmentShaderCodeStart = R"(
@@ -107,6 +107,7 @@ protected:
 		uniform vec2 resolution;
 		uniform float time;
 		uniform float deltaTime;
+		uniform int frame;
 		uniform float audioVolume;
 		uniform float audioBass;
 		uniform float audioMed;

@@ -83,13 +83,13 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 		}
 		i += 1;
 	}
-
+	frame++;
 	float timeNow = getTicks() / 1000.0f;
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate = timeNow;
 	glUniform1f(shader.FindUniform("time"), timeNow);
 	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
-
+	glUniform1i(shader.FindUniform("frame"), frame);
 	glUniform2f(shader.FindUniform("resolution"), currentViewport.width, currentViewport.height);
 
 	std::vector< float > fftData(Audio::getBufferSize());
