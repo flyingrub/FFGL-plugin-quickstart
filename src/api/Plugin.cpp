@@ -223,16 +223,16 @@ void Plugin::addTextParam(std::string name)
 
 void Plugin::addHueColorParam(std::string name)
 {
-	addParam(Param(name, FF_TYPE_HUE,0.5));
-	addParam(Param(name, FF_TYPE_SATURATION,1.0));
-	addParam(Param(name, FF_TYPE_BRIGHTNESS,1.0));
+	addParam(Param(name + "_hue", FF_TYPE_HUE,0.5));
+	addParam(Param(name + "_saturation", FF_TYPE_SATURATION,1.0));
+	addParam(Param(name + "_brighthness", FF_TYPE_BRIGHTNESS,1.0));
 }
 
 void Plugin::addRGBColorParam(std::string name)
 {
-	addParam(Param(name, FF_TYPE_RED));
-	addParam(Param(name, FF_TYPE_GREEN));
-	addParam(Param(name, FF_TYPE_BLUE));
+	addParam(Param(name + "_red", FF_TYPE_RED));
+	addParam(Param(name + "_green", FF_TYPE_GREEN));
+	addParam(Param(name + "_blue", FF_TYPE_BLUE));
 }
 
 bool Plugin::isHueColor(int index)
@@ -243,13 +243,8 @@ bool Plugin::isHueColor(int index)
 		params[index].type == FF_TYPE_HUE &&
 		params[index + 1].type == FF_TYPE_SATURATION &&
 		params[index + 2].type == FF_TYPE_BRIGHTNESS;
-	if (!isColorType) return false;
 
-	bool isSameName =
-		params[index].name.compare(params[index + 1].name) == 0 &&
-		params[index].name.compare(params[index + 2].name) == 0;
-
-	return isSameName;
+	return isColorType;
 }
 
 bool Plugin::isRGBColor(int index)
@@ -260,13 +255,9 @@ bool Plugin::isRGBColor(int index)
 		params[index].type == FF_TYPE_RED &&
 		params[index + 1].type == FF_TYPE_GREEN &&
 		params[index + 2].type == FF_TYPE_BLUE;
-	if (!isColorType) return false;
+	if (isColorType) return false;
 
-	bool isSameName =
-		params[index].name.compare(params[index + 1].name) == 0 &&
-		params[index].name.compare(params[index + 2].name) == 0;
-
-	return isSameName;
+	return isColorType;
 }
 
 Param Plugin::getParam(std::string name)
