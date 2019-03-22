@@ -33,19 +33,13 @@ Effect::~Effect()
 {
 }
 
-FFResult Effect::InitGL(const FFGLViewportStruct * vp)
-{
-	FFResult res = Plugin::InitGL(vp);
-	glUniform1i(shader.FindUniform("inputTexture"), 0);
-	return res;
-}
-
 FFResult Effect::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
 	if (pGL->numInputTextures < 1) return FF_FAIL;
 	if (pGL->inputTextures[0] == NULL) return FF_FAIL;
 
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
+	glUniform1i(shader.FindUniform("inputTexture"), 0);
 
 	FFGLTextureStruct& Texture = *(pGL->inputTextures[0]);
 

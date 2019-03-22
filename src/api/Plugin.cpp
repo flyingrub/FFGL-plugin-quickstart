@@ -30,7 +30,6 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 		i += 1;
 	}
 	fragmentShaderCode += fragmentShader;
-	init();
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
 		DeInitGL();
@@ -41,6 +40,8 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 		DeInitGL();
 		return FF_FAIL;
 	}
+	init();
+
 
 	return CFreeFrameGLPlugin::InitGL(vp);
 

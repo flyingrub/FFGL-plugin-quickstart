@@ -36,20 +36,6 @@ Mixer::~Mixer()
 {
 }
 
-FFResult Mixer::InitGL(const FFGLViewportStruct * vp)
-{
-	FFResult res = Plugin::InitGL(vp);
-	//FFGL requires us to leave the context in a default state on return, so use this scoped binding to help us do that.
-	ScopedShaderBinding shaderBinding(shader.GetGLID());
-
-	//We're never changing the sampler to use, instead during rendering we'll make sure that we're always
-	//binding the texture to the right samplers
-	glUniform1i(shader.FindUniform("textureDest"), 0);
-	glUniform1i(shader.FindUniform("textureSrc"), 1);
-
-	return res;
-}
-
 FFResult Mixer::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 {
 	if (pGL->numInputTextures < 2) return FF_FAIL;
@@ -59,6 +45,8 @@ FFResult Mixer::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	//Activate our shader using the scoped binding so that we'll restore the context state when we're done.
 	ScopedShaderBinding shaderBinding(shader.GetGLID());
 
+	glUniform1i(shader.FindUniform("textureDest"), 0);
+	glUniform1i(shader.FindUniform("textureSrc"), 1);
 	//The input texture's dimension might change each frame and so might the content area.
 	//We're adopting the texture's maxUV using a uniform because that way we dont have to update our vertex buffer each frame.
 	FFGLTextureStruct& TextureDest = *pGL->inputTextures[0];

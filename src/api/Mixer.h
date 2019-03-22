@@ -10,7 +10,6 @@ public:
 	template<typename PluginType>
 	static PluginInstance createPlugin(PluginInfo infos);
 
-	FFResult InitGL(const FFGLViewportStruct * vp) override;
 	FFResult ProcessOpenGL(ProcessOpenGLStruct * pGL) override;
 };
 
