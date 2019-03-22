@@ -30,7 +30,7 @@ public:
 	float value;
 	Range range;
 	std::vector<Option> options; // Used only when type is Option
-	std::vector<char> text = { 0 }; // Used only when type is Text
+	std::string text; // Used only when type is Text
 
 	Param() : Param ("", FF_TYPE_STANDARD) {}
 

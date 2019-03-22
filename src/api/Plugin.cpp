@@ -157,10 +157,7 @@ float Plugin::GetFloatParameter(unsigned int index)
 FFResult Plugin::SetTextParameter(unsigned int index, const char * value)
 {
 	if (0 < index && index <= params.size()) {
-		std::string temp = value == nullptr ? "" : value;
-		params[index - 1].text.clear();
-		params[index - 1].text.insert(params[index - 1].text.begin(), temp.begin(), temp.end());
-		params[index - 1].text.push_back(0);
+		params[index - 1].text = value == nullptr ? "" : value;
 		return FF_SUCCESS;
 	} else {
 		return FF_FAIL;
@@ -170,7 +167,7 @@ FFResult Plugin::SetTextParameter(unsigned int index, const char * value)
 char * Plugin::GetTextParameter(unsigned int index)
 {
 	if (0 < index && index <= params.size()) {
-		return params[index - 1].text.data();
+		return const_cast<char*>(params[index - 1].text.c_str());
 	} else {
 		return "";
 	}
