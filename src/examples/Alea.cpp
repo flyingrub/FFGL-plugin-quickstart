@@ -27,18 +27,17 @@ float polygon(vec2 _uv, float size, float width, float sides) {
 	return 1.-smoothstep(size+width,size+width+0.005,d)-1.+smoothstep(size,size+0.005,d);
 }
 
-
 void main()
 {
-    vec2 uv = fragCoord*2.-1.;
+    vec2 uv = i_uv*2.-1.;
 	uv.x *= resolution.x/resolution.y;
     uv = rotate2D(uv, time*0.1 +  audioVolume);
 	
-    float seed = 8.; // = floor(audioBass * 5.);
     float size = iSize/10. + iSize * audioVolume;
     float width = iSize/40. + iSize * audioVolume * .5;
     float rgbShift = iShiftAmount * audioVolume * .1;
-    float colorR = polygon(uv-vec2(rgbShift,0), size, width, sides);
+    
+	float colorR = polygon(uv-vec2(rgbShift,0), size, width, sides);
     float colorG = polygon(uv, size, width, sides);
     float colorB = polygon(uv+vec2(rgbShift,0), size, width, sides);
 	vec3 color = vec3(colorR, colorG, colorB);
@@ -50,12 +49,12 @@ Alea::Alea()
 {
 	setFragmentShader(fshader);
 	addHueColorParam("color");
-	addParam("iSize", 1);
+	addParam("iSize", .6);
 	addParam("iShiftAmount",0.5);
-	addParam("smoothness", 0.5);
+	addParam("smoothness", 0.9);
 	addButtonParam("change");
 	addBoolParam("fixedSize");
-	Param optionParam = Param("select", FF_TYPE_OPTION, 3.0f);
+	Param optionParam = Param("select", FF_TYPE_OPTION, 1.0f);
 	optionParam.options = {
 		{"Global", 1.0f},
 		{"Bass", 2.0f},

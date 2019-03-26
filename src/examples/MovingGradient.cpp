@@ -8,7 +8,7 @@ static PluginInstance p = Source::createPlugin<MovingGradient>({
 static const std::string fshader = R"(
 void main()
 {
-	vec2 uv = fragCoord;
+	vec2 uv = i_uv;
 	uv.x *= resolution.x/resolution.y;
     
     // Time varying pixel color

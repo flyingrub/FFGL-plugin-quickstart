@@ -6,14 +6,6 @@ static PluginInstance p = Effect::createPlugin<BarrelBlur>({
 });
 
 static const std::string fshader = R"(
-float remap( float t, float a, float b ) {
-	return clamp( (t - a) / (b - a), 0.0, 1.0 );
-}
-
-vec2 remap( vec2 t, vec2 a, vec2 b ) {
-	return clamp( (t - a) / (b - a), 0.0, 1.0 );
-}
-
 vec3 spectrum_offset_rgb( float t )
 {
     float t0 = 3.0 * t - 1.5;
@@ -60,11 +52,6 @@ vec2 distort( vec2 uv, float t, vec2 min_distort, vec2 max_distort )
     return barrelDistortion( uv, 1.75* dist ); //distortion at center
 }
 
-float nrand( vec2 n )
-{
-	return fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);
-}
-
 void main()
 {    
     const float MAX_DIST_PX = 50.0;
@@ -73,12 +60,12 @@ void main()
     vec2 min_distort = 0.5 * max_distort;
     
     vec2 oversiz = distort( vec2(1.0), 1.0, min_distort, max_distort );
-    vec2 m_uv = mix(uv, remap( uv, 1.0-oversiz, oversiz ),zoomAmount) ;
+    vec2 m_uv = mix(i_uv, map( i_uv, 1.0-oversiz, oversiz ),zoomAmount) ;
     
     const int num_iter = 7;
     const float stepsiz = 1.0 / (float(num_iter)-1.0);
-    float rnd = nrand( m_uv + fract(time) );
-    float t = stepsiz;
+    float rnd = random();
+    float t = rnd*stepsiz;
     
     vec3 sumcol = vec3(0.0);
 	vec3 sumw = vec3(0.0);
@@ -96,13 +83,13 @@ void main()
     outcol =  outcol;
     outcol += rnd/255.0;
     
-	fragColor = vec4( outcol, 1.0);
+	fragColor = vec4(outcol, 1.0);
 }
 )";
 
 BarrelBlur::BarrelBlur()
 {
-	setFragmentShader(fshader);
+	setFragmentShader(shader::map + shader::random + fshader);
 	addParam(Param("barrelAmount", 0.5f, {0.0,2.0}));
 	addParam(Param("zoomAmount", 0.5f, { 0.0,1.0 }));
 	addBoolParam("conrady");

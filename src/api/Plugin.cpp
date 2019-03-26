@@ -103,6 +103,10 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	glUniform1f(shader.FindUniform("audioBass"), audio.getBass());
 	glUniform1f(shader.FindUniform("audioMed"), audio.getMed());
 	glUniform1f(shader.FindUniform("audioHigh"), audio.getHigh());
+
+	glUniform1f(shader.FindUniform("bpm"), bpm);
+	glUniform1f(shader.FindUniform("phase"), barPhase);
+
 	update();
 	quad.Draw();
 
@@ -224,16 +228,16 @@ void Plugin::addTextParam(std::string name)
 
 void Plugin::addHueColorParam(std::string name)
 {
-	addParam(Param(name + "_hue", FF_TYPE_HUE,0.5));
-	addParam(Param(name + "_saturation", FF_TYPE_SATURATION,1.0));
-	addParam(Param(name + "_brighthness", FF_TYPE_BRIGHTNESS,1.0));
+	addParam(Param(name, FF_TYPE_HUE, 0.5));
+	addParam(Param(name + "_saturation", FF_TYPE_SATURATION, 1.0));
+	addParam(Param(name + "_brighthness", FF_TYPE_BRIGHTNESS, 1.0));
 }
 
 void Plugin::addRGBColorParam(std::string name)
 {
-	addParam(Param(name + "_red", FF_TYPE_RED));
-	addParam(Param(name + "_green", FF_TYPE_GREEN));
-	addParam(Param(name + "_blue", FF_TYPE_BLUE));
+	addParam(Param(name, FF_TYPE_RED, 0.5));
+	addParam(Param(name + "_green", FF_TYPE_GREEN, 0.5));
+	addParam(Param(name + "_blue", FF_TYPE_BLUE, 0.5));
 }
 
 bool Plugin::isHueColor(int index)
@@ -256,7 +260,6 @@ bool Plugin::isRGBColor(int index)
 		params[index].type == FF_TYPE_RED &&
 		params[index + 1].type == FF_TYPE_GREEN &&
 		params[index + 2].type == FF_TYPE_BLUE;
-	if (isColorType) return false;
 
 	return isColorType;
 }

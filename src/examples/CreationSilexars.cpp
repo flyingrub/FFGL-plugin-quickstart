@@ -14,7 +14,7 @@ void main()
 	float l;
 	float z=t;
 	for(int i=0;i<3;i++) {
-		vec2 m_uv = fragCoord;
+		vec2 m_uv = i_uv;
 		vec2 p=m_uv;
 		p-=.5;
 		p.x*=r.x/r.y;

@@ -6,7 +6,7 @@ Effect::Effect()
 	SetMinInputs(1);
 	SetMaxInputs(1);
 	fragmentShaderCodeStart += R"(
-		in vec2 uv;
+		in vec2 i_uv;
 		uniform vec2 MaxUV;
 
 		uniform sampler2D inputTexture;
@@ -18,12 +18,12 @@ Effect::Effect()
 		layout( location = 0 ) in vec4 vPosition;
 		layout( location = 1 ) in vec2 vUV;
 
-		out vec2 uv;
+		out vec2 i_uv;
 
 		void main()
 		{
 			gl_Position = vPosition;
-			uv = vUV * maxUV;
+			i_uv = vUV * maxUV;
 		}
 	)";
 }

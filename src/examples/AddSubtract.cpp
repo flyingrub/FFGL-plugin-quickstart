@@ -8,7 +8,7 @@ static PluginInstance p = Effect::createPlugin<AddSubtract>({
 static const std::string fshader = R"(
 void main()
 {
-	vec4 color = texture(inputTexture, uv);
+	vec4 color = texture(inputTexture, i_uv);
 	//The inputTexture contains premultiplied colors, so we need to unpremultiply first to apply our effect on straight colors.
 	if (color.a > 0.0)
 		color.rgb /= color.a;

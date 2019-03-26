@@ -35,7 +35,7 @@ float smoothmodulo(float a) {
 
 void main()
 {
-    vec2 U = fragCoord*2.-1.;
+    vec2 U = i_uv*2.-1.;
 	U.x *= resolution.x/resolution.y;
     U = rotate(U,time*rotation_speed);
     U *= repeat*50.;

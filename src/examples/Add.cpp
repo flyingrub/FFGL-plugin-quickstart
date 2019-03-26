@@ -9,8 +9,8 @@ static const std::string fshader = R"(
 void main()
 {
 	//get the two fragments to mix
-	vec4 colorDest = texture( textureDest, uvDest );
-	vec4 colorSrc  = texture( textureSrc, uvSrc );
+	vec4 colorDest = texture( textureDest, i_uv_dest );
+	vec4 colorSrc  = texture( textureSrc, i_uv_src );
 
 	//here we add the colorSrc r,g,b,a pixel value to the colorDest pixel value according to the mixVal value
 	vec4 mix = colorDest + colorSrc * mixVal;
