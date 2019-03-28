@@ -17,11 +17,10 @@ float fractal_noise(vec3 m) {
 
 void main()
 {
-	vec2 p = gl_FragCoord.xy/resolution.x;
+	vec2 p = i_uv;
 	vec3 p3 = vec3(p*zoom, time*speed)*8.0+8.0;
     
-    vec2 uv = gl_FragCoord.xy/resolution.xy;
-    float red = fractal_noise(p3)*.5+.5;
+	float red = fractal_noise(p3)*.5+.5;
 	red = smoothstep(pixel_width,0.,red-amount);
     
     p3 = p3+spaced;
@@ -32,7 +31,7 @@ void main()
     float green = fractal_noise(p3)*.5+.5;
 	green = smoothstep(pixel_width,0.,green-amount);
 
-    vec3 color = texture(inputTexture,uv).rgb;
+    vec3 color = texture(inputTexture,i_uv).rgb;
 	vec3 col = vec3(red,green,blue)*color;
 	
 	fragColor = vec4(vec3(col),1.0);

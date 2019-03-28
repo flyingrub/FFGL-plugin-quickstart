@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BarrelBlur", "BarrelBlur.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dissolve", "Dissolve.vcxproj", "{3A95DEAC-64EC-4F51-989E-9218D73C4812}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Screenshake", "Screenshake.vcxproj", "{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -63,6 +65,10 @@ Global
 		{3A95DEAC-64EC-4F51-989E-9218D73C4812}.Debug|x64.Build.0 = Debug|x64
 		{3A95DEAC-64EC-4F51-989E-9218D73C4812}.Release|x64.ActiveCfg = Release|x64
 		{3A95DEAC-64EC-4F51-989E-9218D73C4812}.Release|x64.Build.0 = Release|x64
+		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Debug|x64.ActiveCfg = Debug|x64
+		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Debug|x64.Build.0 = Debug|x64
+		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Release|x64.ActiveCfg = Release|x64
+		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
