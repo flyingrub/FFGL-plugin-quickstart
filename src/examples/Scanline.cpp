@@ -30,7 +30,8 @@ void main()
 
 Scanline::Scanline()
 {
-	setFragmentShader(shader::random + fshader);
+	include(shader::snippet_id::random);
+	setFragmentShader(fshader);
 	addParam(Param("density", .5, {0.,2.}));
 	addParam(Param("opacityScanline", .4, { 0.,2. }));
 	addParam(Param("opacityNoise", .6, { 0.,4. }));

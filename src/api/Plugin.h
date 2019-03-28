@@ -91,6 +91,8 @@ public:
 	bool isHueColor(int index);
 	bool isRGBColor(int index);
 	Param getParam(std::string name);
+	void include(shader::snippet_id snippet);
+	void include(std::set<shader::snippet_id> snippets);
 	
 protected:
 	std::string fragmentShader;
@@ -102,6 +104,7 @@ protected:
 	std::chrono::time_point<std::chrono::high_resolution_clock> t_start = std::chrono::high_resolution_clock::now();
 	Audio audio;
 	utils::Random random;
+	std::set<shader::snippet_id> includedSnippets;
 
 	std::string fragmentShaderCodeStart = R"(
 		#version 410 core

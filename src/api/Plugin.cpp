@@ -29,6 +29,11 @@ FFResult Plugin::InitGL(const FFGLViewportStruct * vp)
 		}
 		i += 1;
 	}
+
+	for (auto snippet : includedSnippets) {
+		fragmentShaderCode += shader::snippets.find(snippet)->second;
+	}
+
 	fragmentShaderCode += fragmentShader;
 	if (!shader.Compile(vertexShaderCode, fragmentShaderCode))
 	{
@@ -270,4 +275,23 @@ Param Plugin::getParam(std::string name)
 		if (params[i].name.compare(name) == 0) return params[i];
 	}
 	return Param();
+}
+
+void Plugin::include(shader::snippet_id snippet)
+{
+	if (includedSnippets.find(snippet) != includedSnippets.end()) return;
+
+	includedSnippets.insert(snippet);
+	auto deps = shader::dependencies.find(snippet);
+	if (deps == shader::dependencies.end()) return;
+	for (auto dep : deps->second) {
+		includedSnippets.insert(dep);
+	}
+}
+
+void Plugin::include(std::set<shader::snippet_id> snippets)
+{
+	for (auto snippet : snippets) {
+		include(snippet);
+	}
 }

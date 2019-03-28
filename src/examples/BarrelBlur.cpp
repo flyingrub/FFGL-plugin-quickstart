@@ -89,7 +89,8 @@ void main()
 
 BarrelBlur::BarrelBlur()
 {
-	setFragmentShader(shader::map + shader::random + fshader);
+	include({ shader::snippet_id::map, shader::snippet_id::random });
+	setFragmentShader(fshader);
 	addParam(Param("barrelAmount", 0.5f, {0.0,2.0}));
 	addParam(Param("zoomAmount", 0.5f, { 0.0,1.0 }));
 	addBoolParam("conrady");
