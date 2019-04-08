@@ -439,7 +439,7 @@ FFMixed plugMain( FFUInt32 functionCode, FFMixed inputValue, FFInstanceID instan
 	case FF_DEINITIALISE:
 		retval.UIntValue = deInitialise();
 		break;
-	case FF_GETNUMPARAMETERS:
+	case FF_GETNUMPARAMETERS:\
 		retval.UIntValue = getNumParameters();
 		break;
 	case FF_GETPARAMETERNAME:
@@ -629,6 +629,33 @@ FFMixed plugMain( FFUInt32 functionCode, FFMixed inputValue, FFInstanceID instan
 		{
 			retval.UIntValue = FF_FAIL;
 		}
+
+		break;
+	case FF_SET_HOSTINFO:
+		if (pPlugObj != NULL)
+		{
+			const SetHostinfoStructTag* hostInfo = reinterpret_cast<const SetHostinfoStructTag*>(inputValue.PointerValue);
+			pPlugObj->SetHostInfo(hostInfo->name, hostInfo->version);
+			retval.UIntValue = FF_SUCCESS;
+		}
+		else
+		{
+			retval.UIntValue = FF_FAIL;
+		}
+
+		break;
+
+	case FF_SET_SAMPLERATE:
+		if (pPlugObj != NULL)
+		{
+			pPlugObj->SetSampleRate(inputValue.UIntValue);
+			retval.UIntValue = FF_SUCCESS;
+		}
+		else
+		{
+			retval.UIntValue = FF_FAIL;
+		}
+
 		break;
 
 	//Previously used function codes that are no longer supported:

@@ -72,7 +72,7 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 			float saturation = params[i+1].value;
 			float brightness = params[i+2].value;
 			//we need to make sure the hue doesn't reach 1.0f, otherwise the result will be pink and not red how it should be
-			hue = (hue == 1.0f) ? 0.0f : hue; 
+			hue = (hue == 1.0f) ? 0.0f : hue;
 			HSVtoRGB(hue, saturation, brightness, rgb[0], rgb[1], rgb[2]);
 			glUniform3f(shader.FindUniform(name.c_str()), rgb[0], rgb[1], rgb[2]);
 			i += 2;
@@ -183,6 +183,12 @@ char * Plugin::GetTextParameter(unsigned int index)
 	}
 }
 
+void Plugin::SetSampleRate(unsigned int _sampleRate)
+{
+	sampleRate = _sampleRate;
+	audio.setSampleRate(sampleRate);
+}
+
 void Plugin::setFragmentShader(std::string fShader)
 {
 	fragmentShader = fShader;
@@ -220,7 +226,7 @@ void Plugin::addOptionParam(Param param)
 	params.push_back(param);
 	int index = params.size();
 	SetOptionParamInfo(index, param.name.c_str(), param.options.size(), param.value);
-	
+
 	for (int i = 0; i < param.options.size(); i++) {
 		SetParamElementInfo(index, i, param.options[i].name.c_str(), param.options[i].value);
 	}

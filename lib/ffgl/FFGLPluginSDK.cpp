@@ -96,3 +96,15 @@ void CFreeFrameGLPlugin::SetBeatInfo( float bpm, float barPhase )
 	this->bpm = bpm;
 	this->barPhase = barPhase;
 }
+
+void CFreeFrameGLPlugin::SetHostInfo(const char * hostname, const char * version)
+{
+	hostInfos.name = hostname;
+	hostInfos.version = version;
+}
+
+void CFreeFrameGLPlugin::SetSampleRate(unsigned int _sampleRate)
+{
+	sampleRate = _sampleRate;
+}
+

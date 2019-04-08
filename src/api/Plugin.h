@@ -77,6 +77,7 @@ public:
 	float GetFloatParameter(unsigned int index) override;
 	FFResult SetTextParameter(unsigned int index, const char* value) override;
 	char* GetTextParameter(unsigned int index) override;
+	void SetSampleRate(unsigned int _sampleRate) override;
 
 	void setFragmentShader(std::string fShader);
 	void addParam(Param p);

@@ -32,11 +32,11 @@ void main()
     vec2 uv = i_uv*2.-1.;
 	uv.x *= resolution.x/resolution.y;
     uv = rotate2D(uv, time*0.1 +  audioVolume);
-	
+
     float size = iSize/10. + iSize * audioVolume;
     float width = iSize/40. + iSize * audioVolume * .5;
     float rgbShift = iShiftAmount * audioVolume * .1;
-    
+
 	float colorR = polygon(uv-vec2(rgbShift,0), size, width, sides);
     float colorG = polygon(uv, size, width, sides);
     float colorB = polygon(uv+vec2(rgbShift,0), size, width, sides);
@@ -59,15 +59,16 @@ Alea::Alea()
 		{"Global", 1.0f},
 		{"Bass", 2.0f},
 		{"Med", 3.0f},
-		{"Med", 4.0f },
+		{"High", 4.0f },
 	};
 	addOptionParam(optionParam);
 	addTextParam("test");
+	addParam(Param("gainParam", 0.5, {-42,42}));
 }
 
 void Alea::update() {
 	Param change = getParam("change");
-	
+
 	if (change.value == 1) {
 		sides = random.getRandomInt(3, 10);
 	}
@@ -88,7 +89,8 @@ void Alea::update() {
 	glUniform1f(shader.FindUniform("sides"), sides);
 
 	Param smoothness = getParam("smoothness");
-	audio.setSmoothness(smoothness.value);
+	audio.setSmoothness(smoothness.getValue());
+	audio.gainParam = getParam("gainParam").getValue();
 }
 
 Alea::~Alea()

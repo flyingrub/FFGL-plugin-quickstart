@@ -131,6 +131,9 @@ static const FFUInt32 FF_SET_PARAMETER_ELEMENT_VALUE   = 37;
 static const FFUInt32 FF_GETPARAMETERUSAGE             = 32;
 static const FFUInt32 FF_GETPLUGINSHORTNAME            = 33;
 static const FFUInt32 FF_SET_BEATINFO                  = 38;
+static const FFUInt32 FF_SET_HOSTINFO                  = 39;
+static const FFUInt32 FF_SET_SAMPLERATE                = 40;
+
 //Previously used function codes that are no longer in use. Should prevent using
 //these numbers for new function codes.
 //static const FFUInt32 FF_INITIALISE            = 1;
@@ -248,6 +251,13 @@ typedef struct SetBeatinfoStructTag
 	FFMixed bpm;
 	FFMixed barPhase;
 } SetBeatinfoStruct;
+
+// SetHostinfoStruct
+typedef struct SetHostinfoStructTag
+{
+	const char* name;
+	const char* version;
+} SetHostinfoStruct;
 
 //FFGLViewportStruct (for InstantiateGL)
 typedef struct FFGLViewportStructTag

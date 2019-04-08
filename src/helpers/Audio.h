@@ -2,7 +2,7 @@
 #include <FFGLSDK.h>
 #include "Utils.h"
 
-static const int BUFFER_SIZE = 512;
+static const int BUFFER_SIZE = 2048;
 
 class Audio
 {
@@ -17,11 +17,14 @@ public:
 	float getVolumeFromTo(int fromFreq, int toFreq);
 	float toDb(float rms);
 	void setSmoothness(float smoothness);
+	void setSampleRate(int sampleRate);
+	float gainParam = 0;
 
 	static int getBufferSize();
 private:
 	std::vector<float> fft;
 	utils::SmoothValue vol, bass, med, high;
-	float freqMin, freqMax, freqBinStep;
+	float freqMax, freqBinStep;
+	int sampleRate;
 };
 
