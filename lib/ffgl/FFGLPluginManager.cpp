@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <memory.h>
+#include <algorithm>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CFFGLPluginManager constructor and destructor
@@ -101,13 +102,9 @@ void CFFGLPluginManager::SetParamInfo( unsigned int pIndex, const char* pchName,
 	pInfo->elements.resize( 1 );
 	pInfo->usage = 0;
 
-	bool bEndFound = false;
-	for( int i = 0; i < 16; ++i )
-	{
-		if( pchName[ i ] == 0 )
-			bEndFound = true;
-		pInfo->Name[ i ] = ( bEndFound ) ? 0 : pchName[ i ];
-	}
+	std::string stringValue = pchName;
+	memset(pInfo->Name, 0, sizeof(pInfo->Name));
+	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = pType;
 	if( fDefaultValue > 1.0 )
@@ -133,13 +130,9 @@ void CFFGLPluginManager::SetBufferParamInfo( unsigned int pIndex, const char* pc
 	pInfo->elements.resize( numElements );
 	pInfo->usage = usage;
 
-	bool bEndFound = false;
-	for( int i = 0; i < 16; ++i )
-	{
-		if( pchName[ i ] == 0 )
-			bEndFound = true;
-		pInfo->Name[ i ] = ( bEndFound ) ? 0 : pchName[ i ];
-	}
+	std::string stringValue = pchName;
+	memset(pInfo->Name, 0, sizeof(pInfo->Name));
+	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = FF_TYPE_BUFFER;
 
@@ -162,13 +155,9 @@ void CFFGLPluginManager::SetOptionParamInfo( unsigned int pIndex, const char* pc
 	pInfo->elements.resize( numElements );
 	pInfo->usage = FF_USAGE_STANDARD;
 
-	bool bEndFound = false;
-	for( int i = 0; i < 16; ++i )
-	{
-		if( pchName[ i ] == 0 )
-			bEndFound = true;
-		pInfo->Name[ i ] = ( bEndFound ) ? 0 : pchName[ i ];
-	}
+	std::string stringValue = pchName;
+	memset(pInfo->Name, 0, sizeof(pInfo->Name));
+	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = FF_TYPE_OPTION;
 
@@ -201,13 +190,9 @@ void CFFGLPluginManager::SetParamInfo( unsigned int pIndex, const char* pchName,
 	ParamInfo* pInfo = new ParamInfo;
 	pInfo->ID = pIndex;
 
-	bool bEndFound = false;
-	for( int i = 0; i < 16; ++i )
-	{
-		if( pchName[ i ] == 0 )
-			bEndFound = true;
-		pInfo->Name[ i ] = ( bEndFound ) ? 0 : pchName[ i ];
-	}
+	std::string stringValue = pchName;
+	memset(pInfo->Name, 0, sizeof(pInfo->Name));
+	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = pType;
 	pInfo->DefaultValue = bDefaultValue ? 1.0f : 0.0f;
@@ -229,13 +214,9 @@ void CFFGLPluginManager::SetParamInfo( unsigned int dwIndex, const char* pchName
 	pInfo->elements.resize( 1 );
 	pInfo->usage = 0;
 
-	bool bEndFound = false;
-	for( int i = 0; i < 16; ++i )
-	{
-		if( pchName[ i ] == 0 )
-			bEndFound = true;
-		pInfo->Name[ i ] = ( bEndFound ) ? 0 : pchName[ i ];
-	}
+	std::string stringValue = pchName;
+	memset(pInfo->Name, 0, sizeof(pInfo->Name));
+	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = dwType;
 	pInfo->DefaultValue = 0;

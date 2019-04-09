@@ -23,7 +23,7 @@
 #include <memory.h>
 
 // Buffer used by the default implementation of getParameterDisplay
-static char s_DisplayValue[ 15 ];
+static char s_DisplayValue[ 16 ];
 
 ////////////////////////////////////////////////////////
 // CFreeFrameGLPlugin constructor and destructor
@@ -55,9 +55,9 @@ char* CFreeFrameGLPlugin::GetParameterDisplay( unsigned int index )
 		}
 		else
 		{
-			float fValue = m_pPlugin->GetFloatParameter( index );
-			memset( s_DisplayValue, 0, 15 );
-			sprintf( s_DisplayValue, "%f", fValue );
+			std::string stringValue = std::to_string(m_pPlugin->GetFloatParameter( index ));
+			memset(s_DisplayValue, 0, sizeof(s_DisplayValue));
+			memcpy(s_DisplayValue, stringValue.c_str(), std::min(sizeof(s_DisplayValue), stringValue.length()));
 			return s_DisplayValue;
 		}
 	}
