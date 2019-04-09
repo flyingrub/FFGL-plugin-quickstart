@@ -128,16 +128,11 @@ FFResult Plugin::DeInitGL()
 
 char * Plugin::GetParameterDisplay(unsigned int index)
 {
-	/**
-	 * We're not returning ownership over the string we return, so we have to somehow guarantee that
-	 * the lifetime of the returned string encompasses the usage of that string by the host. Having this static
-	 * buffer here keeps previously returned display string alive until this function is called again.
-	 * This happens to be long enough for the hosts we know about.
-	 */
-	static char displayValueBuffer[15];
-	memset(displayValueBuffer, 0, sizeof(displayValueBuffer));
 	if (0 < index && index <= params.size()) {
-		sprintf(displayValueBuffer, "%f", params[index - 1].getValue());
+		static char displayValueBuffer[16];
+		std::string stringValue = std::to_string(params[index - 1].getValue());
+		memset(displayValueBuffer, 0, sizeof(displayValueBuffer));
+		memcpy(displayValueBuffer, stringValue.c_str(), std::min(sizeof(displayValueBuffer), stringValue.length()));
 		return displayValueBuffer;
 	} else {
 		return CFreeFrameGLPlugin::GetParameterDisplay(index);
