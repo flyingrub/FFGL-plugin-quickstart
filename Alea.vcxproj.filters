@@ -44,6 +44,9 @@
     <ClInclude Include="src\helpers\Utils.h">
       <Filter>api</Filter>
     </ClInclude>
+    <ClInclude Include="src\api\Params.h">
+      <Filter>api</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lib">

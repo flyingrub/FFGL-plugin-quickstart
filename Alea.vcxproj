@@ -23,6 +23,7 @@
     <ClCompile Include="lib\FFGLSDK.h" />
     <ClInclude Include="src\api\Effect.h" />
     <ClInclude Include="src\api\Mixer.h" />
+    <ClInclude Include="src\api\Params.h" />
     <ClInclude Include="src\api\Plugin.h" />
     <ClInclude Include="src\api\Source.h" />
     <ClInclude Include="src\examples\Alea.h" />

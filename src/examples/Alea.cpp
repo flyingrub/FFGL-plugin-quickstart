@@ -49,40 +49,34 @@ Alea::Alea()
 {
 	setFragmentShader(fshader);
 	addHueColorParam("color");
-	addParam("iSize", .6);
-	addParam("iShiftAmount",0.5);
-	addParam("smoothness", 0.9);
-	addButtonParam("change");
-	addBoolParam("fixedSize");
-	Param optionParam = Param("select", FF_TYPE_OPTION, 1.0f);
-	optionParam.options = {
-		{"Global", 1.0f},
-		{"Bass", 2.0f},
-		{"Med", 3.0f},
-		{"High", 4.0f },
-	};
-	addOptionParam(optionParam);
-	addTextParam("test");
-	addParam(Param("gainParam", 0.5, {-42,42}));
+	addParam(Param("iSize", .6));
+	addParam(Param("iShiftAmount",0.5));
+	addParam(Param("smoothness", 0.9));
+	addParam(ParamTrigger("change"));
+	addParam(ParamBool("fixedSize"));
+	addParam(ParamOption("select", {
+		"Global", "Bass", "Med", "High"
+	}));
+	addParam(ParamText("test"));
+	addParam(ParamRange("gainParam", 0.5, {-42,42}));
 }
 
 void Alea::update() {
-	Param change = getParam("change");
 
-	if (change.value == 1) {
+	if (getParam("change").getValue()) {
 		sides = random.getRandomInt(3, 10);
 	}
 
-	if (getParam("fixedSize").value) {
+	if (getParam("fixedSize").getValue()) {
 		glUniform1f(shader.FindUniform("audioVolume"), 1.0f);
 	}
 
 	Param select = getParam("select");
-	if (select.value == 2.0f) {
+	if (select.getValue() == 2) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getBass());
-	} else if(select.value == 3.0f) {
+	} else if(select.getValue() == 3) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getMed());
-	} else if(select.value == 4.0f) {
+	} else if(select.getValue() == 4) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getHigh());
 	}
 

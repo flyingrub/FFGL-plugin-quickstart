@@ -5,6 +5,7 @@
 #include "../helpers/Audio.h"
 #include "../helpers/Utils.h"
 #include <chrono>
+#include "Params.h";
 
 typedef CFFGLPluginInfo PluginInstance;
 
@@ -12,48 +13,6 @@ struct PluginInfo {
 	std::string id, name, description, about;
 	int majorVersion = 1;
 	int minorVersion = 0;
-};
-
-struct Option {
-	std::string name;
-	float value;
-};
-
-struct Range {
-	float min = 0.0f, max = 1.0f;
-};
-
-class Param {
-public:
-	std::string name;
-	FFUInt32 type;
-	float value;
-	Range range;
-	std::vector<Option> options; // Used only when type is Option
-	std::string text; // Used only when type is Text
-
-	Param() : Param ("", FF_TYPE_STANDARD) {}
-
-	Param(std::string name) : Param(name, FF_TYPE_STANDARD) {}
-
-	Param(std::string name, FFUInt32 type) : Param(name, type, 0.0f) {}
-
-	Param(std::string name, FFUInt32 type, float currentVal) :
-		Param(name, type, currentVal, Range()) {}
-
-	Param(std::string name, float currentVal, Range range) : 
-		Param(name, FF_TYPE_STANDARD, currentVal, range) {}
-
-	Param(std::string name, FFUInt32 type, float currentVal, Range range) :
-		name(name),
-		type(type),
-		value(currentVal),
-		range(range) {}
-
-	float getValue() {
-		return utils::map(value, 0.0, 1.0, range.min, range.max);
-	}
-
 };
 
 class Plugin : public CFreeFrameGLPlugin
@@ -81,17 +40,14 @@ public:
 
 	void setFragmentShader(std::string fShader);
 	void addParam(Param p);
-	void addParam(std::string name);
-	void addParam(std::string name, float defaultValue);
-	void addBoolParam(std::string name);
-	void addButtonParam(std::string name);
-	void addOptionParam(Param param);
-	void addTextParam(std::string name);
+	void addParam(ParamOption p);
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);
 	bool isRGBColor(int index);
 	Param getParam(std::string name);
+	ParamOption getParamOption(std::string name);
+	ParamText getParamText(std::string name);
 	void include(shader::snippet_id snippet);
 	void include(std::set<shader::snippet_id> snippets);
 	

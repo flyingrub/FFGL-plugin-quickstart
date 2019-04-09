@@ -51,7 +51,7 @@ namespace utils {
 
 namespace shader {
 
-static const enum snippet_id { random, map, simplex };
+const enum snippet_id { random, map, simplex };
 
 static const std::map<snippet_id, std::set<snippet_id>> dependencies = {
 	{simplex, {}}
