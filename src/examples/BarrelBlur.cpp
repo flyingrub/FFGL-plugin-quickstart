@@ -91,15 +91,9 @@ BarrelBlur::BarrelBlur()
 {
 	include({ shader::snippet_id::map, shader::snippet_id::random });
 	setFragmentShader(fshader);
-	addParam(Param("barrelAmount", 0.5f, {0.0,2.0}));
-	addParam(Param("zoomAmount", 0.5f, { 0.0,1.0 }));
-	addBoolParam("conrady");
-}
-
-void BarrelBlur::update()
-{
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	addParam(ParamRange::create("barrelAmount", 0.5f, {0.0,2.0}));
+	addParam(ParamRange::create("zoomAmount", 0.5f, { 0.0,1.0 }));
+	addParam(ParamBool::create("conrady"));
 }
 
 BarrelBlur::~BarrelBlur()

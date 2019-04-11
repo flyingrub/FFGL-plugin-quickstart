@@ -26,7 +26,7 @@ void main()
 MovingGradient::MovingGradient()
 {
 	setFragmentShader(fshader);
-	addParam(Param("amount", 0.5f, {0.,0.5}));
+	addParam(ParamRange::create("amount", 0.5f, {0., 0.5}));
 }
 
 MovingGradient::~MovingGradient()

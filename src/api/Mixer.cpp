@@ -29,7 +29,7 @@ Mixer::Mixer()
 			i_uv_src = vUV * maxUVSrc;
 		}
 	)";
-	addParam(Param("mixVal"));
+	addParam(Param::create("mixVal"));
 }
 
 Mixer::~Mixer()

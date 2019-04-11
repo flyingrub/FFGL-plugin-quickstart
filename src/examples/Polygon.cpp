@@ -47,11 +47,11 @@ void main()
 PolygonRepeat::PolygonRepeat()
 {
 	setFragmentShader(fshader);
-	addParam(Param("repeat", 0.05, { 0., 1. }));
-	addParam(Param("speed", 0.4, { -1., 1. }));
-	addParam(Param("sides", .3, { 1., 10. }));
-	addParam(Param("width", 0.5, { 0., 2. }));
-	addParam(Param("rotation_speed", 0.5, { -1., 1. }));
+	addParam(ParamRange::create("repeat", 0.05, { 0., 1. }));
+	addParam(ParamRange::create("speed", 0.4, { -1., 1. }));
+	addParam(ParamRange::create("sides", .3, { 1., 10. }));
+	addParam(ParamRange::create("width", 0.5, { 0., 2. }));
+	addParam(ParamRange::create("rotation_speed", 0.5, { -1., 1. }));
 }
 
 void PolygonRepeat::update()

@@ -39,21 +39,21 @@ public:
 	void SetSampleRate(unsigned int _sampleRate) override;
 
 	void setFragmentShader(std::string fShader);
-	void addParam(Param p);
-	void addParam(ParamOption p);
+	void addParam(Param::Ptr p);
+	void addParam(ParamOption::Ptr p);
 	void addHueColorParam(std::string name);
 	void addRGBColorParam(std::string name);
 	bool isHueColor(int index);
 	bool isRGBColor(int index);
-	Param getParam(std::string name);
-	ParamOption getParamOption(std::string name);
-	ParamText getParamText(std::string name);
+	Param::Ptr getParam(std::string name);
+	ParamOption::Ptr getParamOption(std::string name);
+	ParamText::Ptr getParamText(std::string name);
 	void include(shader::snippet_id snippet);
 	void include(std::set<shader::snippet_id> snippets);
 	
 protected:
 	std::string fragmentShader;
-	std::vector<Param> params;
+	std::vector<Param::Ptr> params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 	float lastUpdate = 0;

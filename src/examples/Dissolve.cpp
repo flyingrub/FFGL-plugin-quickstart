@@ -41,11 +41,11 @@ void main()
 Dissolve::Dissolve()
 {
 	include(shader::snippet_id::simplex);
-	addParam(Param("zoom", 0.5f, {0.0, 2.0}));
-	addParam(Param("speed", 0.5f, { 0.0, 0.2 }));
-	addParam(Param("amount", 0.5f, { 0.0, 1.0 }));
-	addParam(Param("spaced", 0.5f, { 0.0,.01 }));
-	addParam(Param("smoothness", 0.5f, { 0.0, 1.0 }));
+	addParam(ParamRange::create("zoom", 0.5f, {0.0, 2.0}));
+	addParam(ParamRange::create("speed", 0.5f, { 0.0, 0.2 }));
+	addParam(ParamRange::create("amount", 0.5f, { 0.0, 1.0 }));
+	addParam(ParamRange::create("spaced", 0.5f, { 0.0, .01 }));
+	addParam(ParamRange::create("smoothness", 0.5f, { 0.0, 1.0 }));
 	setFragmentShader(fshader);
 }
 

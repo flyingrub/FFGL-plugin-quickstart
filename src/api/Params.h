@@ -6,35 +6,38 @@
 
 class Param {
 protected:
-	float value;
+	float value = 0;
 	std::string name;
 	FFUInt32 type;
+
 public:
+	typedef std::shared_ptr<Param> Ptr;
+	static Ptr create() { return create(""); };
+	static Ptr create(std::string name) { return create(name, 0); };
+	static Ptr create(std::string name, float value) { return create(name, FF_TYPE_STANDARD, value); };
+	static Ptr create(std::string name, FFUInt32 type, float value) { return std::make_shared<Param>(name, type, value); };
+
 	Param() : Param("") {}
-	Param(std::string name) : Param("", 0) {}
+	Param(std::string name) : Param(name, 0) {}
 	Param(std::string name, float value) : Param(name, FF_TYPE_STANDARD, value) {}
 	Param(std::string name, FFUInt32 type, float value) : name(name), type(type), value(value) {}
 
 	virtual void setValue(float v) { value = v; }
-
 	virtual float getValue() { return value; }
-
 	std::string getName() { return name; }
-
 	FFUInt32 getType() { return type; }
 };
 
 class ParamRange : public Param {
 public:
-	struct Range {
-		float min = 0.0f, max = 1.0f;
-	};
-	ParamRange(std::string name, float value, Range range) :
-		Param(name, FF_TYPE_STANDARD, value), range(range) {}
-	float getValue() override
-	{
-		return utils::map(value, 0.0, 1.0, range.min, range.max);
-	}
+	struct Range { float min = 0.0f, max = 1.0f; };
+	typedef std::shared_ptr<ParamRange> Ptr;
+	
+	static Ptr create(std::string name, float value, Range range) { return std::make_shared<ParamRange>(name, value, range); }
+
+	ParamRange(std::string name, float value, Range range) : Param(name, FF_TYPE_STANDARD, value), range(range) {}
+
+	float getValueNormalised() { return utils::map(value, 0.0, 1.0, range.min, range.max); }
 private:
 	Range range;
 };
@@ -42,26 +45,24 @@ private:
 class ParamOption : public Param {
 
 public:
+	typedef std::shared_ptr<ParamOption> Ptr;
 	typedef std::vector<std::string> Options;
-
 	Options options;
 
-	ParamOption(std::string name, std::vector<std::string> options) :
-		ParamOption(name, options, 0) {}
-	ParamOption(std::string name, std::vector<std::string> options, int defaultOption) :
-		Param(name, FF_TYPE_OPTION, defaultOption), options(options)
+	static Ptr create(std::string name, Options options) { return create(name, options, 0); }
+	static Ptr create(std::string name, Options options, int defaultOption) { return std::make_shared<ParamOption>(name, options, defaultOption); }
+
+	ParamOption(std::string name, Options options) : ParamOption(name, options, 0) {}
+	ParamOption(std::string name, Options options, int defaultOption) : Param(name, FF_TYPE_OPTION, defaultOption), options(options)
 	{
 		setValue(defaultOption);
 	}
-	void setValue(float _value) override
-	{
+
+	void setValue(float _value) override {
 		options.size() <= _value ? value = 0 : value = _value;
 		currentOption = options[value];
 	}
-	bool isCurrentOption(std::string option)
-	{
-		return option.compare(currentOption) == 0;
-	}
+	bool isCurrentOption(std::string option) { return option.compare(currentOption) == 0; }
 private:
 	std::string currentOption;
 };
@@ -73,10 +74,13 @@ public:
 
 class ParamTrigger : public ParamEvent {
 public:
-	ParamTrigger(std::string name) : ParamEvent(name) {}
+	typedef std::shared_ptr<ParamTrigger> Ptr;
 	
-	virtual void setValue(float _value) override
-	{
+	static Ptr create(std::string name) { return std::make_shared<ParamTrigger>(name); }
+
+	ParamTrigger(std::string name) : ParamEvent(name) {}
+
+	virtual void setValue(float _value) override {
 		bool current = _value == 1;
 		bool previous = value == 1;
 		tiggerValue = current && !previous;
@@ -89,13 +93,22 @@ private:
 
 class ParamBool : public Param {
 public:
+	typedef std::shared_ptr<ParamBool> Ptr;
+	static Ptr create(std::string name) { return create(name, false); }
+	static Ptr create(std::string name, bool defaultValue) { return std::make_shared<ParamBool>(name, defaultValue); }
+
 	ParamBool(std::string name) : ParamBool(name, false) {}
 	ParamBool(std::string name, bool defaultValue) : Param(name, FF_TYPE_BOOLEAN, defaultValue) {}
 };
 
 class ParamText : public Param {
 public:
+	typedef std::shared_ptr<ParamText> Ptr;
 	std::string text;
+
+	static Ptr create(std::string name) { return create(name, ""); }
+	static Ptr create(std::string name, std::string text) { return std::make_shared<ParamText>(name, text); }
+	
 	ParamText(std::string name) : ParamText(name, "") {}
 	ParamText(std::string name, std::string text) : Param(name, FF_TYPE_TEXT, 0), text(text) {}
 };

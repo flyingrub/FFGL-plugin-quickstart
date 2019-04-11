@@ -4,7 +4,6 @@ class BarrelBlur : public Effect
 {
 public:
 	BarrelBlur();
-	void update() override;
 	~BarrelBlur();
 };
 

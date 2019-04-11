@@ -19,20 +19,9 @@ Screenshake::Screenshake()
 {
 	include(shader::snippet_id::simplex);
 	setFragmentShader(fshader);
-	addParam(Param("amount", 0.1f, {0.0, 1.0}));
-	addParam(Param("speed", 0.3f, { 0.0, 3. }));
-	addBoolParam("random");
-	addBoolParam("clamp");
-}
-
-void Screenshake::update()
-{
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	if (getParam("clamp").getValue()) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
+	addParam(ParamRange::create("amount", 0.1f, {0.0, 1.0}));
+	addParam(ParamRange::create("speed", 0.3f, { 0.0, 3. }));
+	addParam(ParamBool::create("random"));
 }
 
 Screenshake::~Screenshake()
