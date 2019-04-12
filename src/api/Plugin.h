@@ -74,6 +74,8 @@ protected:
 		uniform float audioBass;
 		uniform float audioMed;
 		uniform float audioHigh;
+		uniform float bpm;
+		uniform float phase;
 	)";
 	std::string vertexShaderCode;
 };

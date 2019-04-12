@@ -23,6 +23,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dissolve", "Dissolve.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Screenshake", "Screenshake.vcxproj", "{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Strobotime", "Strobotime.vcxproj", "{9FA46233-7B05-4C0C-A733-519C47030E7B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triskel", "Triskel.vcxproj", "{B6BC84A0-89A4-4512-A502-F239FF79D014}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +73,14 @@ Global
 		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Debug|x64.Build.0 = Debug|x64
 		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Release|x64.ActiveCfg = Release|x64
 		{2BAC6008-F607-4570-BA29-AE57BFD4B1F3}.Release|x64.Build.0 = Release|x64
+		{9FA46233-7B05-4C0C-A733-519C47030E7B}.Debug|x64.ActiveCfg = Debug|x64
+		{9FA46233-7B05-4C0C-A733-519C47030E7B}.Debug|x64.Build.0 = Debug|x64
+		{9FA46233-7B05-4C0C-A733-519C47030E7B}.Release|x64.ActiveCfg = Release|x64
+		{9FA46233-7B05-4C0C-A733-519C47030E7B}.Release|x64.Build.0 = Release|x64
+		{B6BC84A0-89A4-4512-A502-F239FF79D014}.Debug|x64.ActiveCfg = Debug|x64
+		{B6BC84A0-89A4-4512-A502-F239FF79D014}.Debug|x64.Build.0 = Debug|x64
+		{B6BC84A0-89A4-4512-A502-F239FF79D014}.Release|x64.ActiveCfg = Release|x64
+		{B6BC84A0-89A4-4512-A502-F239FF79D014}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\helpers\Audio.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Effect.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Mixer.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Plugin.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Source.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FFGLSDK.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FFGLSDK.h">
+      <Filter>lib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\helpers\Audio.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Effect.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Mixer.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Plugin.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Source.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\Utils.h">
+      <Filter>api</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="api">
+      <UniqueIdentifier>{07c1e186-9f1f-4154-a449-7d332e774721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{2d8c07f8-9edb-4880-9d49-1e3e44aa64ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

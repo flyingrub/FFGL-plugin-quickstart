@@ -3,6 +3,7 @@
 #include <string>
 #include <FFGLSDK.h>
 #include "../helpers/Utils.h"
+#include <atomic>
 
 class Param {
 protected:
@@ -69,6 +70,9 @@ private:
 
 class ParamEvent : public Param {
 public:
+	typedef std::shared_ptr<ParamEvent> Ptr;
+
+	static Ptr create(std::string name) { return std::make_shared<ParamEvent>(name); }
 	ParamEvent(std::string name) : Param(name, FF_TYPE_EVENT, 0) {}
 };
 
@@ -80,15 +84,18 @@ public:
 
 	ParamTrigger(std::string name) : ParamEvent(name) {}
 
-	virtual void setValue(float _value) override {
-		bool current = _value == 1;
-		bool previous = value == 1;
-		tiggerValue = current && !previous;
+	void setValue(float _value) override {
+		bool current = _value;
+		bool previous = value;
+		triggerValue = current && !previous;
+		value = _value;
 	}
 
-	float getValue() override { return tiggerValue; }
+	float getValue() override {
+		return triggerValue;
+	}
 private:
-	bool tiggerValue;
+	bool triggerValue;
 };
 
 class ParamBool : public Param {

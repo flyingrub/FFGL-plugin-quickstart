@@ -72,18 +72,18 @@ void Alea::update() {
 		glUniform1f(shader.FindUniform("audioVolume"), 1.0f);
 	}
 
-	if (select->getValue() == 2) {
+	if (select->getValue() == 1) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getBass());
-	} else if(select->getValue() == 3) {
+	} else if(select->getValue() == 2) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getMed());
-	} else if(select->getValue() == 4) {
+	} else if(select->getValue() == 3) {
 		glUniform1f(shader.FindUniform("audioVolume"), audio.getHigh());
 	}
 
 	glUniform1f(shader.FindUniform("sides"), sides);
 
 	audio.setSmoothness(smoothness->getValue());
-	audio.gainParam = gainParam->getValue();
+	audio.gainParam = gainParam->getValueNormalised();
 }
 
 Alea::~Alea()

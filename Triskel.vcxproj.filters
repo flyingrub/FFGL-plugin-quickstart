@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="lib\FFGLSDK.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FFGLSDK.h">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\helpers\Audio.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Effect.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Mixer.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Plugin.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\Source.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\examples\Triskel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\helpers\Audio.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Effect.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Mixer.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Plugin.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\Source.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\Utils.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="src\examples\Triskel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="api">
+      <UniqueIdentifier>{9af19624-1681-477e-91d8-c9ac639a47a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{d5cb4a05-8637-4cc5-afb3-8865ff94ce1f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

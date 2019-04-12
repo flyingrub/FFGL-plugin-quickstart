@@ -131,7 +131,9 @@ char * Plugin::GetParameterDisplay(unsigned int index)
 	if (0 < index && index <= params.size()) {
 		if (params[index - 1]->getType() == FF_TYPE_TEXT) return (char*) FF_FAIL;
 		static char displayValueBuffer[16];
-		std::string stringValue = std::to_string(params[index - 1]->getValue());
+		auto range = std::dynamic_pointer_cast<ParamRange>(params[index - 1]);
+		float value = range ? range->getValueNormalised() : params[index - 1]->getValue();
+		std::string stringValue = std::to_string(value);
 		memset(displayValueBuffer, 0, sizeof(displayValueBuffer));
 		memcpy(displayValueBuffer, stringValue.c_str(), std::min(sizeof(displayValueBuffer), stringValue.length()));
 		return displayValueBuffer;
