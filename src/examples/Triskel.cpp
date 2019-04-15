@@ -6,11 +6,13 @@ static PluginInstance p = Source::createPlugin<Triskel>({
 });
 
 static const std::string fshader = R"(
+#define pixel_width 200./resolution.y
+
 void main()
 {
 	vec2 R = resolution.xy;
 	vec2 U = i_uv*R;
-	float iTime = time;
+	float iTime = relativeTime;
     U = (U+U-R)/R.y + vec2(0,.1);
     
     float tau = 6.283,                                       // 3 symmetries
@@ -22,13 +24,14 @@ void main()
     l = length(U), a = atan(U.y,U.x);                        // spiral
 	vec4 O = vec4( l + fract((a+2.25)/tau) < 5. + cos(iTime*.2) * 2. ? 0.5+.5*sin(a+tau*l*sin(iTime*.2)*5.) : 0.);
     
-	O = smoothstep(.1*cos(iTime*.03),.0,abs(O-.5));   // optional decoration
+	O = smoothstep(pixel_width,.0,abs(O-.5));   // optional decoration
 	fragColor = O;
 }
 )";
 
 Triskel::Triskel()
 {
+	addParam(ParamRange::create("speed", 0.5f, { 0.0, 2. }));
 	setFragmentShader(fshader);
 }
 

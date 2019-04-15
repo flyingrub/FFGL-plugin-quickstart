@@ -79,15 +79,17 @@ public:
 class ParamTrigger : public ParamEvent {
 public:
 	typedef std::shared_ptr<ParamTrigger> Ptr;
+	std::vector<bool> states;
 	
 	static Ptr create(std::string name) { return std::make_shared<ParamTrigger>(name); }
 
 	ParamTrigger(std::string name) : ParamEvent(name) {}
 
 	void setValue(float _value) override {
+		states.push_back(_value);
 		bool current = _value;
 		bool previous = value;
-		triggerValue = current && !previous;
+		triggerValue = current && !triggerValue;
 		value = _value;
 	}
 

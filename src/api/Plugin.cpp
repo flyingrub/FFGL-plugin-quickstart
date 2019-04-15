@@ -93,8 +93,14 @@ FFResult Plugin::ProcessOpenGL(ProcessOpenGLStruct * pGL)
 	float timeNow = std::chrono::duration<double, std::milli>(t_now - t_start).count() / 1000.0f;
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate = timeNow;
+	
+	auto speedParam = std::dynamic_pointer_cast<ParamRange>(getParam("speed"));
+	double speed = speedParam ? speedParam->getValueNormalised() : 1;
+	relativeTime += deltaTime * speed;
+	
 	glUniform1f(shader.FindUniform("time"), timeNow);
 	glUniform1f(shader.FindUniform("deltaTime"), deltaTime);
+	glUniform1f(shader.FindUniform("relativeTime"), relativeTime);
 	glUniform1i(shader.FindUniform("frame"), frame);
 	glUniform2f(shader.FindUniform("resolution"), currentViewport.width, currentViewport.height);
 
@@ -215,8 +221,8 @@ void Plugin::addParam(ParamOption::Ptr param)
 
 void Plugin::addHueColorParam(std::string name)
 {
-	addParam(Param::create(name, FF_TYPE_HUE, 0.5));
-	addParam(Param::create(name + "_saturation", FF_TYPE_SATURATION, 1.0));
+	addParam(Param::create(name, FF_TYPE_HUE, 0.));
+	addParam(Param::create(name + "_saturation", FF_TYPE_SATURATION, 0.));
 	addParam(Param::create(name + "_brighthness", FF_TYPE_BRIGHTNESS, 1.0));
 }
 

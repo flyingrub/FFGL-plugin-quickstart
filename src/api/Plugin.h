@@ -56,6 +56,7 @@ protected:
 	std::vector<Param::Ptr> params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
+	double relativeTime = 0;
 	float lastUpdate = 0;
 	int frame = 0;
 	std::chrono::time_point<std::chrono::high_resolution_clock> t_start = std::chrono::high_resolution_clock::now();
@@ -69,6 +70,7 @@ protected:
 		uniform vec2 resolution;
 		uniform float time;
 		uniform float deltaTime;
+		uniform float relativeTime;
 		uniform int frame;
 		uniform float audioVolume;
 		uniform float audioBass;

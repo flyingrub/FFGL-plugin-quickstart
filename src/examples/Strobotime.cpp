@@ -10,7 +10,7 @@ void main()
 {
 	vec4 tex = texture(inputTexture, i_uv);
 	bool shouldBeOn = fract(phase * speed) < dutyCycle;
-	
+	tex = mix(tex,vec4(0,0,0,1),blackframe);
 	fragColor=mix(tex,vec4(color,1.),shouldBeOn);
 }
 )";
@@ -18,8 +18,9 @@ void main()
 Strobotime::Strobotime()
 {
 	addHueColorParam("color");
-	addParam(dutyCycle = Param::create("dutyCycle"));
+	addParam(dutyCycle = Param::create("dutyCycle",.5f));
 	addParam(speed = ParamRange::create("speed", .5, { 1 , 64 }));
+	addParam(ParamBool::create("blackframe"));
 	setFragmentShader(fshader);
 }
 
@@ -32,7 +33,7 @@ void Strobotime::update() {
 	v |= v >> 8;
 	v |= v >> 16;
 	v++;
-	float value = (float)v / 16.f;
+	float value = (float)v/4.f;
 	glUniform1f(shader.FindUniform("speed"), value);
 }
 

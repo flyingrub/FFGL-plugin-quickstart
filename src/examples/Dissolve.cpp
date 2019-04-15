@@ -18,7 +18,7 @@ float fractal_noise(vec3 m) {
 void main()
 {
 	vec2 p = i_uv;
-	vec3 p3 = vec3(p*zoom, time*speed)*8.0+8.0;
+	vec3 p3 = vec3(p*zoom, relativeTime)*8.0+8.0;
     
 	float red = fractal_noise(p3)*.5+.5;
 	red = smoothstep(pixel_width,0.,red-amount);
