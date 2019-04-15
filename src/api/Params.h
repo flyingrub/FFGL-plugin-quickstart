@@ -118,16 +118,16 @@ public:
 	{
 	}
 	ParamOption( std::string name, Options options, int defaultOption ) :
-		Param( name, FF_TYPE_OPTION, defaultOption ),
+		Param( name, FF_TYPE_OPTION, (float) defaultOption ),
 		options( options )
 	{
-		setValue( defaultOption );
+		setValue( (float) defaultOption );
 	}
 
 	void setValue( float _value ) override
 	{
 		options.size() <= _value ? value = 0 : value = _value;
-		currentOption                                = options[ value ];
+		currentOption = options[ (size_t) value ];
 	}
 	bool isCurrentOption( std::string option )
 	{
@@ -174,7 +174,7 @@ public:
 		states.push_back( _value );
 		bool current  = _value;
 		bool previous = value;
-		triggerValue  = current && !triggerValue;
+		triggerValue  = current && !previous;
 		value         = _value;
 	}
 

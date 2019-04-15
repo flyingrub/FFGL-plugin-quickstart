@@ -90,7 +90,7 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 		if( params[ i ]->getType() == FF_TYPE_BOOLEAN || params[ i ]->getType() == FF_TYPE_EVENT )
 		{
 			std::string name = params[ i ]->getName();
-			glUniform1i( shader.FindUniform( name.c_str() ), params[ i ]->getValue() );
+			glUniform1i( shader.FindUniform( name.c_str() ), (bool) params[ i ]->getValue() );
 		}
 		else
 		{
@@ -103,19 +103,19 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 	}
 	frame++;
 	auto t_now      = std::chrono::high_resolution_clock::now();
-	float timeNow   = std::chrono::duration< double, std::milli >( t_now - t_start ).count() / 1000.0f;
+	float timeNow   = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate      = timeNow;
 
 	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
-	double speed    = speedParam ? speedParam->getValueNormalised() : 1;
+	float speed    = speedParam ? speedParam->getValueNormalised() : 1;
 	relativeTime += deltaTime * speed;
 
 	glUniform1f( shader.FindUniform( "time" ), timeNow );
 	glUniform1f( shader.FindUniform( "deltaTime" ), deltaTime );
 	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 	glUniform1i( shader.FindUniform( "frame" ), frame );
-	glUniform2f( shader.FindUniform( "resolution" ), currentViewport.width, currentViewport.height );
+	glUniform2f( shader.FindUniform( "resolution" ), (float) currentViewport.width, (float) currentViewport.height );
 
 	std::vector< float > fftData( Audio::getBufferSize() );
 	const ParamInfo* fftInfo = FindParamInfo( FFT_INPUT_INDEX );
@@ -232,18 +232,18 @@ void Plugin::setFragmentShader( std::string fShader )
 void Plugin::addParam( Param::Ptr param )
 {
 	params.push_back( param );
-	SetParamInfof( params.size(), param->getName().c_str(), param->getType() );
+	SetParamInfof( (unsigned int)params.size(), param->getName().c_str(), param->getType() );
 }
 
 void Plugin::addParam( ParamOption::Ptr param )
 {
 	params.push_back( param );
-	int index = params.size();
-	SetOptionParamInfo( index, param->getName().c_str(), param->options.size(), param->getValue() );
+	unsigned int index = (unsigned int)params.size();
+	SetOptionParamInfo( index, param->getName().c_str(), (unsigned int)param->options.size(), param->getValue() );
 
-	for( int i = 0; i < param->options.size(); i++ )
+	for( unsigned int i = 0; i < param->options.size(); i++ )
 	{
-		SetParamElementInfo( index, i, param->options[ i ].c_str(), i );
+		SetParamElementInfo( index, i, param->options[ i ].c_str(), (float)i );
 	}
 }
 

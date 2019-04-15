@@ -15,14 +15,14 @@ void Audio::update( std::vector< float > _fft )
 	float currentVolStore = 0;
 	float bassStore       = 0;
 	float bassCount       = 0;
-	float bassSep         = Audio::getBufferSize() / 3;
+	int bassSep           = Audio::getBufferSize() / 3;
 	float medStore        = 0;
 	float medCount        = 0;
-	float highSep         = bassSep * 2;
+	int highSep           = bassSep * 2;
 	float highStore       = 0;
 	float highCount       = 0;
 
-	double gain = pow( 10.f, gainParam / 20.f );
+	float gain = pow( 10.f, gainParam / 20.f );
 
 	for( int i = 0; i < Audio::getBufferSize(); i++ )
 	{

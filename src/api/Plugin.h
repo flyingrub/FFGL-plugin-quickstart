@@ -5,7 +5,7 @@
 #include "../helpers/Audio.h"
 #include "../helpers/Utils.h"
 #include <chrono>
-#include "Params.h";
+#include "Params.h"
 
 typedef CFFGLPluginInfo PluginInstance;
 
@@ -57,9 +57,9 @@ protected:
 	std::vector< Param::Ptr > params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
-	double relativeTime                                                   = 0;
-	float lastUpdate                                                      = 0;
-	int frame                                                             = 0;
+	float relativeTime = 0;
+	float lastUpdate   = 0;
+	int frame          = 0;
 	std::chrono::time_point< std::chrono::high_resolution_clock > t_start = std::chrono::high_resolution_clock::now();
 	Audio audio;
 	utils::Random random;
