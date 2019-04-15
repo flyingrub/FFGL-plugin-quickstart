@@ -1,9 +1,9 @@
 #include "Polygon.h"
 
-static PluginInstance p = Source::createPlugin<PolygonRepeat>({
-	"FL05", // plugin unique ID
-	"Polygon" // Plugin name
-});
+static PluginInstance p = Source::createPlugin< PolygonRepeat >( {
+	"FL05",  // plugin unique ID
+	"Polygon"// Plugin name
+} );
 
 static const std::string fshader = R"(
 precision highp float;
@@ -46,12 +46,12 @@ void main()
 
 PolygonRepeat::PolygonRepeat()
 {
-	setFragmentShader(fshader);
-	addParam(ParamRange::create("repeat", 0.05, { 0., 1. }));
-	addParam(ParamRange::create("speed", 0.4, { -1., 1. }));
-	addParam(ParamRange::create("sides", .3, { 1., 10. }));
-	addParam(ParamRange::create("width", 0.5, { 0., 2. }));
-	addParam(ParamRange::create("rotation_speed", 0.5, { -1., 1. }));
+	setFragmentShader( fshader );
+	addParam( ParamRange::create( "repeat", 0.05, { 0., 1. } ) );
+	addParam( ParamRange::create( "speed", 0.4, { -1., 1. } ) );
+	addParam( ParamRange::create( "sides", .3, { 1., 10. } ) );
+	addParam( ParamRange::create( "width", 0.5, { 0., 2. } ) );
+	addParam( ParamRange::create( "rotation_speed", 0.5, { -1., 1. } ) );
 }
 
 void PolygonRepeat::update()
@@ -60,5 +60,4 @@ void PolygonRepeat::update()
 
 PolygonRepeat::~PolygonRepeat()
 {
-
 }

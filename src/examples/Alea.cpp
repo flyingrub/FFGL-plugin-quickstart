@@ -1,9 +1,9 @@
 #include "Alea.h"
 
-static PluginInstance p = Source::createPlugin<Alea>({
-	"FL01", // plugin unique ID
+static PluginInstance p = Source::createPlugin< Alea >( {
+	"FL01",// plugin unique ID
 	"ALEA" // Plugin name
-});
+} );
 
 static const std::string fshader = R"(
 #define PI 3.14159265359
@@ -47,42 +47,46 @@ void main()
 
 Alea::Alea()
 {
-	setFragmentShader(fshader);
-	addHueColorParam("color");
-	addParam(Param::create("iSize", .6));
-	addParam(Param::create("iShiftAmount",0.5));
-	addParam(smoothness = Param::create("smoothness", 0.9));
-	addParam(change = ParamTrigger::create("change"));
-	addParam(fixedSize = ParamBool::create("fixedSize"));
-	addParam(select = ParamOption::create("select", {
-		"Global", "Bass", "Med", "High"
-	}));
-	addParam(test = ParamText::create("test"));
-	addParam(gainParam = ParamRange::create("gainParam", 0.5, {-42,42}));
-
+	setFragmentShader( fshader );
+	addHueColorParam( "color" );
+	addParam( Param::create( "iSize", .6 ) );
+	addParam( Param::create( "iShiftAmount", 0.5 ) );
+	addParam( smoothness = Param::create( "smoothness", 0.9 ) );
+	addParam( change = ParamTrigger::create( "change" ) );
+	addParam( fixedSize = ParamBool::create( "fixedSize" ) );
+	addParam( select = ParamOption::create( "select", { "Global", "Bass", "Med", "High" } ) );
+	addParam( test = ParamText::create( "test" ) );
+	addParam( gainParam = ParamRange::create( "gainParam", 0.5, { -42, 42 } ) );
 }
 
-void Alea::update() {
-
-	if (change->getValue()) {
-		sides = random.getRandomInt(3, 10);
+void Alea::update()
+{
+	if( change->getValue() )
+	{
+		sides = random.getRandomInt( 3, 10 );
 	}
 
-	if (fixedSize->getValue()) {
-		glUniform1f(shader.FindUniform("audioVolume"), 1.0f);
+	if( fixedSize->getValue() )
+	{
+		glUniform1f( shader.FindUniform( "audioVolume" ), 1.0f );
 	}
 
-	if (select->getValue() == 1) {
-		glUniform1f(shader.FindUniform("audioVolume"), audio.getBass());
-	} else if(select->getValue() == 2) {
-		glUniform1f(shader.FindUniform("audioVolume"), audio.getMed());
-	} else if(select->getValue() == 3) {
-		glUniform1f(shader.FindUniform("audioVolume"), audio.getHigh());
+	if( select->getValue() == 1 )
+	{
+		glUniform1f( shader.FindUniform( "audioVolume" ), audio.getBass() );
+	}
+	else if( select->getValue() == 2 )
+	{
+		glUniform1f( shader.FindUniform( "audioVolume" ), audio.getMed() );
+	}
+	else if( select->getValue() == 3 )
+	{
+		glUniform1f( shader.FindUniform( "audioVolume" ), audio.getHigh() );
 	}
 
-	glUniform1f(shader.FindUniform("sides"), sides);
+	glUniform1f( shader.FindUniform( "sides" ), sides );
 
-	audio.setSmoothness(smoothness->getValue());
+	audio.setSmoothness( smoothness->getValue() );
 	audio.gainParam = gainParam->getValueNormalised();
 }
 

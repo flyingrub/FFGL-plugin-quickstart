@@ -1,9 +1,9 @@
 #include "Add.h"
 
-static PluginInstance p = Mixer::createPlugin<Add>({
-	"FL03", // plugin unique ID
-	"Add FFGL" // Plugin name
-});
+static PluginInstance p = Mixer::createPlugin< Add >( {
+	"FL03",   // plugin unique ID
+	"Add FFGL"// Plugin name
+} );
 
 static const std::string fshader = R"(
 void main()
@@ -22,7 +22,7 @@ void main()
 
 Add::Add()
 {
-	setFragmentShader(fshader);
+	setFragmentShader( fshader );
 }
 
 Add::~Add()

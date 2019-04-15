@@ -10,4 +10,3 @@ public:
 	Param::Ptr dutyCycle;
 	ParamRange::Ptr speed;
 };
-

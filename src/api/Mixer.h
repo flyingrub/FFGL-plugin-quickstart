@@ -1,20 +1,19 @@
 #pragma once
 #include "Plugin.h"
-class Mixer :
-	public Plugin
+class Mixer : public Plugin
 {
 public:
 	Mixer();
 	~Mixer();
 
-	template<typename PluginType>
-	static PluginInstance createPlugin(PluginInfo infos);
+	template< typename PluginType >
+	static PluginInstance createPlugin( PluginInfo infos );
 
-	FFResult ProcessOpenGL(ProcessOpenGLStruct * pGL) override;
+	FFResult ProcessOpenGL( ProcessOpenGLStruct* pGL ) override;
 };
 
-template<typename PluginType>
-inline PluginInstance Mixer::createPlugin(PluginInfo infos)
+template< typename PluginType >
+inline PluginInstance Mixer::createPlugin( PluginInfo infos )
 {
-	return Plugin::createPlugin<PluginType>(infos, FF_EFFECT);
+	return Plugin::createPlugin< PluginType >( infos, FF_EFFECT );
 }

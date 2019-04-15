@@ -1,9 +1,9 @@
 #include "Dissolve.h"
 
-static PluginInstance p = Effect::createPlugin<Dissolve>({
-	"FL09", // plugin unique ID
-	"Dissolve" // Plugin name
-});
+static PluginInstance p = Effect::createPlugin< Dissolve >( {
+	"FL09",   // plugin unique ID
+	"Dissolve"// Plugin name
+} );
 
 static const std::string fshader = R"(
 #define pixel_width 3./resolution.y
@@ -40,13 +40,13 @@ void main()
 
 Dissolve::Dissolve()
 {
-	include(shader::snippet_id::simplex);
-	addParam(ParamRange::create("zoom", 0.5f, {0.0, 2.0}));
-	addParam(ParamRange::create("speed", 0.5f, { 0.0, 0.2 }));
-	addParam(ParamRange::create("amount", 0.5f, { 0.0, 1.0 }));
-	addParam(ParamRange::create("spaced", 0.5f, { 0.0, .01 }));
-	addParam(ParamRange::create("smoothness", 0.5f, { 0.0, 1.0 }));
-	setFragmentShader(fshader);
+	include( shader::snippet_id::simplex );
+	addParam( ParamRange::create( "zoom", 0.5f, { 0.0, 2.0 } ) );
+	addParam( ParamRange::create( "speed", 0.5f, { 0.0, 0.2 } ) );
+	addParam( ParamRange::create( "amount", 0.5f, { 0.0, 1.0 } ) );
+	addParam( ParamRange::create( "spaced", 0.5f, { 0.0, .01 } ) );
+	addParam( ParamRange::create( "smoothness", 0.5f, { 0.0, 1.0 } ) );
+	setFragmentShader( fshader );
 }
 
 Dissolve::~Dissolve()

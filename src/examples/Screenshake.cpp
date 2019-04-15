@@ -1,9 +1,9 @@
 #include "Screenshake.h"
 
-static PluginInstance p = Effect::createPlugin<Screenshake>({
-	"FL10", // plugin unique ID
-	"Screenshake" // Plugin name
-});
+static PluginInstance p = Effect::createPlugin< Screenshake >( {
+	"FL10",      // plugin unique ID
+	"Screenshake"// Plugin name
+} );
 
 static const std::string fshader = R"(
 void main()
@@ -17,11 +17,11 @@ void main()
 
 Screenshake::Screenshake()
 {
-	include(shader::snippet_id::simplex);
-	setFragmentShader(fshader);
-	addParam(ParamRange::create("amount", 0.1f, {0.0, 1.0}));
-	addParam(ParamRange::create("speed", 0.3f, { 0.0, 3. }));
-	addParam(ParamBool::create("random"));
+	include( shader::snippet_id::simplex );
+	setFragmentShader( fshader );
+	addParam( ParamRange::create( "amount", 0.1f, { 0.0, 1.0 } ) );
+	addParam( ParamRange::create( "speed", 0.3f, { 0.0, 3. } ) );
+	addParam( ParamBool::create( "random" ) );
 }
 
 Screenshake::~Screenshake()

@@ -2,8 +2,8 @@
 
 Source::Source()
 {
-	SetMinInputs(0);
-	SetMaxInputs(0);
+	SetMinInputs( 0 );
+	SetMaxInputs( 0 );
 	fragmentShaderCodeStart += R"(
 		in vec2 i_uv;
 	)";

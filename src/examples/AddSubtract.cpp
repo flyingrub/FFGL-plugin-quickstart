@@ -1,9 +1,9 @@
 #include "AddSubtract.h"
 
-static PluginInstance p = Effect::createPlugin<AddSubtract>({
-	"FL02", // plugin unique ID
-	"Add Subtract FFGL" // Plugin name
-});
+static PluginInstance p = Effect::createPlugin< AddSubtract >( {
+	"FL02",            // plugin unique ID
+	"Add Subtract FFGL"// Plugin name
+} );
 
 static const std::string fshader = R"(
 void main()
@@ -24,10 +24,9 @@ void main()
 
 AddSubtract::AddSubtract()
 {
-	setFragmentShader(fshader);
-	addRGBColorParam("brightness");
+	setFragmentShader( fshader );
+	addRGBColorParam( "brightness" );
 }
-
 
 AddSubtract::~AddSubtract()
 {

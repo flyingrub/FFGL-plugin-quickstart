@@ -6,4 +6,3 @@ public:
 	CreationSilexars();
 	~CreationSilexars();
 };
-

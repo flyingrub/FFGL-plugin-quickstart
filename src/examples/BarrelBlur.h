@@ -6,4 +6,3 @@ public:
 	BarrelBlur();
 	~BarrelBlur();
 };
-

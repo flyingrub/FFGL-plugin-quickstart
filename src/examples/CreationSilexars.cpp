@@ -1,9 +1,9 @@
 #include "CreationSilexars.h"
 
-static PluginInstance p = Source::createPlugin<CreationSilexars>({
-	"FL04", // plugin unique ID
-	"Creation Silexars" // Plugin name
-});
+static PluginInstance p = Source::createPlugin< CreationSilexars >( {
+	"FL04",            // plugin unique ID
+	"Creation Silexars"// Plugin name
+} );
 
 static const std::string fshader = R"(
 void main()
@@ -29,7 +29,7 @@ void main()
 
 CreationSilexars::CreationSilexars()
 {
-	setFragmentShader(fshader);
+	setFragmentShader( fshader );
 }
 
 CreationSilexars::~CreationSilexars()

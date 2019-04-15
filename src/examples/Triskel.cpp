@@ -1,9 +1,9 @@
 #include "Triskel.h"
 
-static PluginInstance p = Source::createPlugin<Triskel>({
-	"FL11", // plugin unique ID
-	"Triskel" // Plugin name
-});
+static PluginInstance p = Source::createPlugin< Triskel >( {
+	"FL11",  // plugin unique ID
+	"Triskel"// Plugin name
+} );
 
 static const std::string fshader = R"(
 #define pixel_width 200./resolution.y
@@ -31,8 +31,8 @@ void main()
 
 Triskel::Triskel()
 {
-	addParam(ParamRange::create("speed", 0.5f, { 0.0, 2. }));
-	setFragmentShader(fshader);
+	addParam( ParamRange::create( "speed", 0.5f, { 0.0, 2. } ) );
+	setFragmentShader( fshader );
 }
 
 Triskel::~Triskel()

@@ -4,63 +4,78 @@
 #include <map>
 #include <set>
 
-namespace utils {
-	inline float map(float value, float low, float high, float newLow, float newHigh) {
-		float res = newLow + (value - low) * (newHigh - newLow) / (high - low);
-		return std::clamp(res, newLow, newHigh);
-	}
-
-	class SmoothValue {
-
-	public:
-		SmoothValue() {}
-		void setSmoothness(float smooth) {
-			smoothness = smooth;
-		}
-		void update(float val) {
-			value *= smoothness;
-			value += (1-smoothness) * val;
-		}
-		float getValue() {
-			return value;
-		}
-	private:
-		float smoothness = 0.80f;
-		float value = 0.0f;
-	};
-
-	class Random {
-		std::random_device device;
-		std::mt19937 rng;
-	public:
-		Random() {
-			rng = std::mt19937(device());
-		}
-		
-		int getRandomInt(int min, int max) {
-			std::uniform_int_distribution distribution(min, max);
-			return distribution(rng);
-		}
-		
-		float getRandomFloat(float min, float max) {
-			std::uniform_real_distribution distribution(min, max);
-			return distribution(rng);
-		}
-	};
+namespace utils
+{
+inline float map( float value, float low, float high, float newLow, float newHigh )
+{
+	float res = newLow + ( value - low ) * ( newHigh - newLow ) / ( high - low );
+	return std::clamp( res, newLow, newHigh );
 }
 
-namespace shader {
+class SmoothValue
+{
+public:
+	SmoothValue()
+	{
+	}
+	void setSmoothness( float smooth )
+	{
+		smoothness = smooth;
+	}
+	void update( float val )
+	{
+		value *= smoothness;
+		value += ( 1 - smoothness ) * val;
+	}
+	float getValue()
+	{
+		return value;
+	}
 
-const enum snippet_id { random, map, simplex };
-
-static const std::map<snippet_id, std::set<snippet_id>> dependencies = {
-	{simplex, {}}
+private:
+	float smoothness = 0.80f;
+	float value      = 0.0f;
 };
 
-static const std::map<snippet_id, std::string> snippets = {
+class Random
+{
+	std::random_device device;
+	std::mt19937 rng;
 
-// Hardware indepedant random [0;1]
-{ snippet_id::random, R"(
+public:
+	Random()
+	{
+		rng = std::mt19937( device() );
+	}
+
+	int getRandomInt( int min, int max )
+	{
+		std::uniform_int_distribution distribution( min, max );
+		return distribution( rng );
+	}
+
+	float getRandomFloat( float min, float max )
+	{
+		std::uniform_real_distribution distribution( min, max );
+		return distribution( rng );
+	}
+};
+}// namespace utils
+
+namespace shader
+{
+const enum snippet_id { random,
+						map,
+						simplex };
+
+static const std::map< snippet_id, std::set< snippet_id > > dependencies = {
+	{ simplex, {} }
+};
+
+static const std::map< snippet_id, std::string > snippets = {
+
+	// Hardware indepedant random [0;1]
+	{ snippet_id::random, R"(
  const uint random_k = 1103515245U;  // GLIB C
 
 float random( uvec2 x )
@@ -85,7 +100,7 @@ float random() {
 }
 )" },
 
-{ snippet_id::map, R"(
+	{ snippet_id::map, R"(
 float map( float t, float a, float b ) {
 	return clamp( (t - a) / (b - a), 0.0, 1.0 );
 }
@@ -105,7 +120,7 @@ vec2 map(vec2 value, vec2 low, vec2 high, vec2 newLow, vec2 newHigh) {
 }
 )" },
 
-{ snippet_id::simplex, R"(
+	{ snippet_id::simplex, R"(
 vec3 random3(vec3 c) {
 	float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));
 	vec3 r;
@@ -162,6 +177,7 @@ float fractal_noise(vec3 m, vec4 coef) {
 			+coef.z*simplex3d(4.0*m*rot3)
 			+coef.w*simplex3d(8.0*m);
 }
-)"}};
+)" }
+};
 
-}
+}// namespace shader
