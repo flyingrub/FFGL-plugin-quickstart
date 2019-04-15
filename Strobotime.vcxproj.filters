@@ -22,6 +22,7 @@
     <ClCompile Include="lib\FFGLSDK.h">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\examples\Strobotime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\helpers\Audio.h">
@@ -42,6 +43,7 @@
     <ClInclude Include="src\helpers\Utils.h">
       <Filter>api</Filter>
     </ClInclude>
+    <ClInclude Include="src\examples\Strobotime.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="api">
