@@ -22,7 +22,7 @@ void Audio::update( std::vector< float > _fft )
 	float highStore       = 0;
 	float highCount       = 0;
 
-	float gain = pow( 10.f, gainParam / 20.f );
+	float gain = pow( 10.f, gainParam->getValueNormalised() / 20.f );
 
 	for( int i = 0; i < Audio::getBufferSize(); i++ )
 	{
@@ -109,6 +109,11 @@ void Audio::setSampleRate( int _sampleRate )
 	sampleRate  = _sampleRate;
 	freqMax     = (float) sampleRate / 2.f;
 	freqBinStep = freqMax / BUFFER_SIZE;
+}
+
+void Audio::setGain( ParamRange::Ptr gain )
+{
+	gainParam = gain;
 }
 
 int Audio::getBufferSize()

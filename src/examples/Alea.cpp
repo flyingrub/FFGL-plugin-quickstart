@@ -57,6 +57,7 @@ Alea::Alea()
 	addParam( select = ParamOption::create( "select", { "Global", "Bass", "Med", "High" } ) );
 	addParam( test = ParamText::create( "test" ) );
 	addParam( gainParam = ParamRange::create( "gainParam", 0.5, { -42, 42 } ) );
+	audio.setGain( gainParam );
 }
 
 void Alea::update()
@@ -87,7 +88,6 @@ void Alea::update()
 	glUniform1f( shader.FindUniform( "sides" ), (float)sides );
 
 	audio.setSmoothness( smoothness->getValue() );
-	audio.gainParam = gainParam->getValueNormalised();
 }
 
 Alea::~Alea()
