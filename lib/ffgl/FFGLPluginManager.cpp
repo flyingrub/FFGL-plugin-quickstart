@@ -259,7 +259,7 @@ unsigned int CFFGLPluginManager::GetNumParamElements( unsigned int dwIndex ) con
 	if( paramInfo == nullptr )
 		return FF_FAIL;
 
-	return paramInfo->elements.size();
+	return (unsigned int)paramInfo->elements.size();
 }
 char* CFFGLPluginManager::GetParamElementName( unsigned int dwIndex, unsigned int elIndex )
 {

@@ -52,7 +52,7 @@ float getTicks()
 	if( offsetDrift > ( hiResTicksPerSecond >> 1 ) )
 		hiResTicksOffset = newOffset;
 
-	return ( (double)( ticks.QuadPart + hiResTicksOffset ) ) * hiResTicksScaleFactor;
+	return (float)( ticks.QuadPart + hiResTicksOffset * hiResTicksScaleFactor );
 
 #else
 
@@ -91,11 +91,11 @@ void HSVtoRGB( float h, float s, float v, float& r, float& g, float& b )
 	}
 	else
 	{
-		double var_h = h * 6;
-		double var_i = floor( var_h );
-		double var_1 = v * ( 1 - s );
-		double var_2 = v * ( 1 - s * ( var_h - var_i ) );
-		double var_3 = v * ( 1 - s * ( 1 - ( var_h - var_i ) ) );
+		float var_h = h * 6;
+		float var_i  = floor( var_h );
+		float var_1  = v * ( 1 - s );
+		float var_2  = v * ( 1 - s * ( var_h - var_i ) );
+		float var_3  = v * ( 1 - s * ( 1 - ( var_h - var_i ) ) );
 
 		if( var_i == 0 )
 		{
