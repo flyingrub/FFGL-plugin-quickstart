@@ -26,7 +26,7 @@ Strobotime::Strobotime()
 
 void Strobotime::update()
 {
-	unsigned long v = speed->getValueNormalised();
+	unsigned long v = (unsigned long)speed->getValueNormalised();
 	v--;//
 	v |= v >> 1;
 	v |= v >> 2;

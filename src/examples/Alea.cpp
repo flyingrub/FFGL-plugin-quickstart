@@ -49,9 +49,9 @@ Alea::Alea()
 {
 	setFragmentShader( fshader );
 	addHueColorParam( "color" );
-	addParam( Param::create( "iSize", .6 ) );
-	addParam( Param::create( "iShiftAmount", 0.5 ) );
-	addParam( smoothness = Param::create( "smoothness", 0.9 ) );
+	addParam( Param::create( "iSize", .6f ) );
+	addParam( Param::create( "iShiftAmount", 0.5f ) );
+	addParam( smoothness = Param::create( "smoothness", 0.9f ) );
 	addParam( change = ParamTrigger::create( "change" ) );
 	addParam( fixedSize = ParamBool::create( "fixedSize" ) );
 	addParam( select = ParamOption::create( "select", { "Global", "Bass", "Med", "High" } ) );
@@ -84,7 +84,7 @@ void Alea::update()
 		glUniform1f( shader.FindUniform( "audioVolume" ), audio.getHigh() );
 	}
 
-	glUniform1f( shader.FindUniform( "sides" ), sides );
+	glUniform1f( shader.FindUniform( "sides" ), (float)sides );
 
 	audio.setSmoothness( smoothness->getValue() );
 	audio.gainParam = gainParam->getValueNormalised();

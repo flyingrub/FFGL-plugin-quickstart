@@ -34,10 +34,10 @@ Scanline::Scanline()
 {
 	include( shader::snippet_id::random );
 	setFragmentShader( fshader );
-	addParam( ParamRange::create( "density", .5, { 0., 2. } ) );
-	addParam( ParamRange::create( "opacityScanline", .4, { 0., 2. } ) );
-	addParam( ParamRange::create( "opacityNoise", .6, { 0., 4. } ) );
-	addParam( ParamRange::create( "flickering", .3, { 0., .1 } ) );
+	addParam( ParamRange::create( "density", 0.5f, { 0.0f, 2.0f } ) );
+	addParam( ParamRange::create( "opacityScanline", 0.4f, { 0.0f, 2.0f } ) );
+	addParam( ParamRange::create( "opacityNoise", 0.6f, { 0.0f, 4.0f } ) );
+	addParam( ParamRange::create( "flickering", 0.3f, { 0.0f, 0.1f } ) );
 }
 Scanline::~Scanline()
 {
