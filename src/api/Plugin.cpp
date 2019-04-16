@@ -12,7 +12,7 @@ Plugin::~Plugin()
 {
 }
 
-FFResult Plugin::InitGL( const FFGLViewportStruct* vp )
+FFResult Plugin::InitGL( const FFGLViewportStruct* viewPort )
 {
 	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i                          = 0;
@@ -52,10 +52,10 @@ FFResult Plugin::InitGL( const FFGLViewportStruct* vp )
 	}
 	init();
 
-	return CFreeFrameGLPlugin::InitGL( vp );
+	return CFreeFrameGLPlugin::InitGL( viewPort );
 }
 
-FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* pGL )
+FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 {
 	ScopedShaderBinding shaderBinding( shader.GetGLID() );
 	// Clamp to edge is broken in Resolume right now so disable it
@@ -107,8 +107,8 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* pGL )
 	float deltaTime = timeNow - lastUpdate;
 	lastUpdate      = timeNow;
 
-	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
-	float speed    = speedParam ? speedParam->getValueNormalised() : 1;
+	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam("speed") );
+	float speed     = speedParam ? speedParam->getValueNormalised() : 1;
 	relativeTime += deltaTime * speed;
 
 	glUniform1f( shader.FindUniform( "time" ), timeNow );

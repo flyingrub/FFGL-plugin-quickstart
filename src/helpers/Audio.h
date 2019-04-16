@@ -36,26 +36,27 @@ public:
 	/// \return		The volume of the given range
 	float getVolumeFromTo( int fromFreq, int toFreq );
 
-	/// This method convert a value going from 0 to 1 in a linear scale as 
+	/// This method convert a value going from 0 to 1 in a linear scale as
 	/// a logarithmic representation of it going from -96 to 0db
-	/// \return The volume exprimed in dB
+	/// \return		The volume exprimed in dB
 	float toDb( float value );
 
 	/// This method allows to set the smoothness of the current audio value.
 	/// At each update only a certain percentage of the new value is taken into account
 	/// This prevent big jump in values that could be ugly if represented visually.
-	/// \param smoothness		The new smoothness value, it should be between 0 (not smooth) and 1 (smooth)
+	/// \param smoothness	The new smoothness value, it should be between 0 (not smooth) and 1 (smooth)
 	void setSmoothness( float smoothness );
 	/// This method is called by the Plugin when the sample rate as changed in the host
-	/// \param sampleRate		The new sampleRate value, usually something like 44100 or 48000
+	/// \param sampleRate	The new sampleRate value, usually something like 44100 or 48000
 	void setSampleRate( int sampleRate );
 	/// This method allows to set the paramter that represent a gain parameter.
 	/// This gain will be applied before calculating the differents audio volumes.
-	/// \param gain		The gain parameter, usually the -42 to 42 range works well
+	/// As this is a pointer to a ParamRange you only need to set this once.
+	/// \param gain			The gain parameter, usually the -42 to 42 range works well
 	void setGain( ParamRange::Ptr gain );
 
 	/// This method return the BUFFER_SIZE defined just at the start of this file.
-	/// \return		The fft BUFFER_SIZE
+	/// \return				The fft BUFFER_SIZE
 	static int getBufferSize();
 
 private:
@@ -63,5 +64,5 @@ private:
 	utils::SmoothValue vol, bass, med, high;
 	float freqMax, freqBinStep;
 	int sampleRate;
-	ParamRange::Ptr gainParam;
+	ParamRange::Ptr gainParam = ParamRange::create( "default", 0, {} );
 };

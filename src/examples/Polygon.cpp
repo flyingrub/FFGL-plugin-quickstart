@@ -39,7 +39,7 @@ void main()
 	U.x *= resolution.x/resolution.y;
     U = rotate(U,time*rotation_speed);
     U *= repeat*50.;
-    float c = stroke(smoothmodulo(polygonSDF(U)+time*10.*speed),1.);
+    float c = stroke(smoothmodulo(polygonSDF(U)+relativeTime*10.),1.);
     fragColor = vec4(vec3(c),1.);                                       
 }
 )";
