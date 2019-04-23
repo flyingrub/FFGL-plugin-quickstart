@@ -64,7 +64,7 @@ void Alea::update()
 {
 	if( change->getValue() )
 	{
-		sides = random.getRandomInt( 3, 10 );
+		sides = random.getRandomInt( 4, 10 );
 	}
 
 	if( fixedSize->getValue() )
