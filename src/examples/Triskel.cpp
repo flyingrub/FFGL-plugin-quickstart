@@ -7,6 +7,7 @@ static PluginInstance p = Source::createPlugin< Triskel >( {
 
 static const std::string fshader = R"(
 #define pixel_width 200./resolution.y
+uniform float relativeTime;
 
 void main()
 {
@@ -33,6 +34,14 @@ Triskel::Triskel()
 {
 	addParam( ParamRange::create( "speed", 0.5f, { 0.0, 2. } ) );
 	setFragmentShader( fshader );
+}
+
+void Triskel::update()
+{
+	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
+	float speed     = speedParam->getValueNormalised();
+	relativeTime += deltaTime * speed;
+	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 }
 
 Triskel::~Triskel()

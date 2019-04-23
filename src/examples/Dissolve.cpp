@@ -7,6 +7,7 @@ static PluginInstance p = Effect::createPlugin< Dissolve >( {
 
 static const std::string fshader = R"(
 #define pixel_width 3./resolution.y
+uniform float relativeTime;
 
 float fractal_noise(vec3 m) {
     float start = 0.5;
@@ -47,6 +48,14 @@ Dissolve::Dissolve()
 	addParam( ParamRange::create( "spaced", 0.5f, { 0.0f, .01f } ) );
 	addParam( ParamRange::create( "smoothness", 0.5f, { 0.0f, 1.0f } ) );
 	setFragmentShader( fshader );
+}
+
+void Dissolve::update()
+{
+	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
+	float speed     = speedParam->getValueNormalised();
+	relativeTime += deltaTime * speed;
+	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 }
 
 Dissolve::~Dissolve()

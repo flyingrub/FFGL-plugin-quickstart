@@ -6,10 +6,11 @@ static PluginInstance p = Source::createPlugin< PolygonRepeat >( {
 } );
 
 static const std::string fshader = R"(
-precision highp float;
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718
 #define pixel_width 50.*repeat*3./resolution.y
+uniform float relativeTime;
+uniform float relativeRotationTime;
 
 float stroke(float d, float size) {
 	return smoothstep(pixel_width,0.0,abs(d-size)-width/2.);
@@ -37,7 +38,7 @@ void main()
 {
     vec2 U = i_uv*2.-1.;
 	U.x *= resolution.x/resolution.y;
-    U = rotate(U,time*rotation_speed);
+    U = rotate(U,relativeRotationTime);
     U *= repeat*50.;
     float c = stroke(smoothmodulo(polygonSDF(U)+relativeTime*10.),1.);
     fragColor = vec4(vec3(c),1.);                                       
@@ -48,14 +49,22 @@ PolygonRepeat::PolygonRepeat()
 {
 	setFragmentShader( fshader );
 	addParam( ParamRange::create( "repeat", 0.05f, { 0.0f, 1.0f } ) );
-	addParam( ParamRange::create( "speed", 0.4f, { -1.0f, 1.0f } ) );
+	addParam( ParamRange::create( "speed", 0.4f, { -.5f, .5f } ) );
 	addParam( ParamRange::create( "sides", 0.3f, { 1.0f, 10.0f } ) );
 	addParam( ParamRange::create( "width", 0.5f, { 0.0f, 2.0f } ) );
-	addParam( ParamRange::create( "rotation_speed", 0.5, { -1.0f, 1.0f } ) );
+	addParam( ParamRange::create( "rotation_speed", 0.5, { -2.0f, 2.0f } ) );
 }
 
 void PolygonRepeat::update()
 {
+	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
+	float speed     = speedParam->getValueNormalised();
+	relativeTime += deltaTime * speed;
+	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
+	auto speedRotationParam = std::dynamic_pointer_cast< ParamRange >( getParam( "rotation_speed" ) );
+	float speedRotation     = speedRotationParam->getValueNormalised();
+	relativeRotationTime += deltaTime * speedRotation;
+	glUniform1f( shader.FindUniform( "relativeRotationTime" ), relativeRotationTime );
 }
 
 PolygonRepeat::~PolygonRepeat()

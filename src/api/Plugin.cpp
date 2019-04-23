@@ -104,16 +104,11 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 	frame++;
 	auto t_now      = std::chrono::high_resolution_clock::now();
 	float timeNow   = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
-	float deltaTime = timeNow - lastUpdate;
+	deltaTime = timeNow - lastUpdate;
 	lastUpdate      = timeNow;
-
-	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam("speed") );
-	float speed     = speedParam ? speedParam->getValueNormalised() : 1;
-	relativeTime += deltaTime * speed;
 
 	glUniform1f( shader.FindUniform( "time" ), timeNow );
 	glUniform1f( shader.FindUniform( "deltaTime" ), deltaTime );
-	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 	glUniform1i( shader.FindUniform( "frame" ), frame );
 	glUniform2f( shader.FindUniform( "resolution" ), (float) currentViewport.width, (float) currentViewport.height );
 

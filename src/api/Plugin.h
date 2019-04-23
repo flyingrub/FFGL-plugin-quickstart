@@ -146,9 +146,9 @@ protected:
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 
-	float relativeTime = 0;
-	float lastUpdate   = 0;
-	int frame          = 0;
+	float deltaTime  = 0;
+	float lastUpdate = 0;
+	int frame        = 0;
 	std::chrono::time_point< std::chrono::high_resolution_clock > t_start = std::chrono::high_resolution_clock::now();
 	Audio audio;
 	utils::Random random;
@@ -160,7 +160,6 @@ protected:
 		uniform vec2 resolution;
 		uniform float time;
 		uniform float deltaTime;
-		uniform float relativeTime;
 		uniform int frame;
 		uniform float audioVolume;
 		uniform float audioBass;
