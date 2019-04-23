@@ -161,6 +161,7 @@ static const FFUInt32 FF_UNSUPPORTED = 0;
 // Plugin types
 static const FFUInt32 FF_EFFECT = 0;
 static const FFUInt32 FF_SOURCE = 1;
+static const FFUInt32 FF_MIXER  = 2;
 
 // Plugin capabilities
 static const FFUInt32 FF_CAP_SETTIME            = 5;

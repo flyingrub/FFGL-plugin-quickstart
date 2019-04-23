@@ -22,8 +22,7 @@ public:
 	Plugin();
 	~Plugin();
 
-	/// This method allows to actually create an FFGL Plugin and will take care of
-	/// instanciancing and all of the boring stuff
+	/// This method allows to create the plugin description
 	template< typename PluginType >
 	static PluginInstance createPlugin( PluginInfo infos, FFUInt32 type );
 
@@ -177,7 +176,7 @@ template< typename PluginType >
 inline PluginInstance Plugin::createPlugin( PluginInfo infos, FFUInt32 type )
 {
 	return PluginInstance(
-		PluginFactory< PluginType >,// Create method
+		PluginFactory< PluginType >,// Create method, allows the host to create a new instance of the plugin
 		infos.id.c_str(),           // Plugin unique ID
 		infos.name.c_str(),         // Plugin name
 		2,                          // API major version number

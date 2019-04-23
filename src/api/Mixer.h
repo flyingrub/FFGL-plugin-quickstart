@@ -15,5 +15,5 @@ public:
 template< typename PluginType >
 inline PluginInstance Mixer::createPlugin( PluginInfo infos )
 {
-	return Plugin::createPlugin< PluginType >( infos, FF_EFFECT );
+	return Plugin::createPlugin< PluginType >( infos, FF_MIXER );
 }
