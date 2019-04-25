@@ -127,6 +127,7 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 
 	update();
 	quad.Draw();
+	consumeAllTrigger();
 
 	return FF_SUCCESS;
 }
@@ -334,5 +335,17 @@ void Plugin::include( std::set< shader::snippet_id > snippets )
 	for( auto snippet : snippets )
 	{
 		include( snippet );
+	}
+}
+
+void Plugin::consumeAllTrigger()
+{
+	for(int i = 0; i < params.size(); i++)
+	{
+		auto trigger = std::dynamic_pointer_cast< ParamTrigger >( params[ i ] );
+		if( trigger )
+		{
+			trigger->consume();
+		}
 	}
 }

@@ -157,7 +157,6 @@ class ParamTrigger : public ParamEvent
 {
 public:
 	typedef std::shared_ptr< ParamTrigger > Ptr;
-	std::vector< bool > states;
 
 	static Ptr create( std::string name )
 	{
@@ -169,22 +168,10 @@ public:
 	{
 	}
 
-	void setValue( float _value ) override
+	void consume()
 	{
-		states.push_back( _value );
-		bool current  = _value;
-		bool previous = value;
-		triggerValue  = current && !previous;
-		value         = _value;
+		value = false;
 	}
-
-	float getValue() override
-	{
-		return triggerValue;
-	}
-
-private:
-	bool triggerValue;
 };
 
 class ParamBool : public Param

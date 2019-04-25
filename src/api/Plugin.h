@@ -169,6 +169,9 @@ protected:
 		uniform float phase;
 	)";
 	std::string vertexShaderCode;
+
+	// This function will consume the value for all ParamTrigger//
+	void consumeAllTrigger();
 };
 
 template< typename PluginType >
