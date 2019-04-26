@@ -228,13 +228,13 @@ void Plugin::setFragmentShader( std::string fShader )
 void Plugin::addParam( Param::Ptr param )
 {
 	params.push_back( param );
-	SetParamInfof( (unsigned int)params.size(), param->getName().c_str(), param->getType() );
+	SetParamInfo( (unsigned int)params.size(), param->getName().c_str(), param->getType(), param->getValue() );
 }
 
 void Plugin::addParam( ParamRange::Ptr param )
 {
 	params.push_back( param );
-	SetParamInfof( (unsigned int)params.size(), param->getName().c_str(), param->getType() );
+	SetParamInfo( (unsigned int)params.size(), param->getName().c_str(), param->getType(), param->getValue() );
 	SetParamRange( (unsigned int)params.size(), param->getRange().min, param->getRange().max);
 }
 

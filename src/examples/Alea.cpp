@@ -57,6 +57,7 @@ Alea::Alea()
 	addParam( select = ParamOption::create( "select", { "Global", "Bass", "Med", "High" } ) );
 	addParam( test = ParamText::create( "test" ) );
 	addParam( gainParam = ParamRange::create( "gainParam", 0.5, { -42, 42 } ) );
+	addParam( ParamRange::createInteger( "testInteger", 15, {-1000,1000}) );
 	audio.setGain( gainParam );
 }
 

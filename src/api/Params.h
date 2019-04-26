@@ -82,6 +82,13 @@ public:
 		return std::make_shared< ParamRange >( name, value, range );
 	}
 
+	static Ptr createInteger( std::string name, int value, Range range )
+	{
+		auto res = std::make_shared< ParamRange >( name, (float)value, range );
+		res->type = FF_TYPE_INTEGER;
+		return res;
+	}
+
 	ParamRange( std::string name, float value, Range range ) :
 		Param( name, FF_TYPE_STANDARD, value ),
 		range( range )
@@ -98,7 +105,7 @@ public:
 		return range;
 	}
 
-private:
+protected:
 	Range range;
 };
 

@@ -195,6 +195,7 @@ static const FFUInt32 FF_TYPE_YPOS       = 6;
 static const FFUInt32 FF_TYPE_STANDARD   = 10;
 static const FFUInt32 FF_TYPE_OPTION     = 11;
 static const FFUInt32 FF_TYPE_BUFFER     = 12;
+static const FFUInt32 FF_TYPE_INTEGER    = 13;
 static const FFUInt32 FF_TYPE_TEXT       = 100;
 static const FFUInt32 FF_TYPE_HUE        = 200;
 static const FFUInt32 FF_TYPE_SATURATION = 201;

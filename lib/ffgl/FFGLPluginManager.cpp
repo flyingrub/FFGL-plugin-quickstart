@@ -108,10 +108,14 @@ void CFFGLPluginManager::SetParamInfo( unsigned int pIndex, const char* pchName,
 	memcpy(pInfo->Name, stringValue.c_str(), std::min(sizeof(pInfo->Name), stringValue.length()));
 
 	pInfo->dwType = pType;
-	if( fDefaultValue > 1.0 )
-		fDefaultValue = 1.0;
-	if( fDefaultValue < 0.0 )
-		fDefaultValue = 0.0;
+	if (pType == FF_TYPE_STANDARD)
+	{
+		if( fDefaultValue > 1.0 )
+			fDefaultValue = 1.0;
+		if( fDefaultValue < 0.0 )
+			fDefaultValue = 0.0;
+	}
+
 	pInfo->DefaultValue = fDefaultValue;
 	pInfo->StrDefaultValue = NULL;
 	pInfo->pNext = NULL;
@@ -344,7 +348,7 @@ FFMixed CFFGLPluginManager::GetParamDefault( unsigned int dwIndex ) const
 	if( GetParamType( dwIndex ) == FF_TYPE_TEXT )
 		result.PointerValue = (void*)paramInfo->StrDefaultValue;
 	else
-		result.UIntValue = *(unsigned int*)&paramInfo->DefaultValue;
+		result.UIntValue = *(FFUInt32*)&paramInfo->DefaultValue;
 	
 	return result;
 }
