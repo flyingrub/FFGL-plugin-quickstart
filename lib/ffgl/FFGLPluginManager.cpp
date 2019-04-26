@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <algorithm>
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CFFGLPluginManager constructor and destructor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,6 +234,25 @@ void CFFGLPluginManager::SetParamInfo( unsigned int dwIndex, const char* pchName
 void CFFGLPluginManager::SetTimeSupported( bool supported )
 {
 	m_timeSupported = supported;
+}
+
+void CFFGLPluginManager::SetParamRange(unsigned int index, float min, float max)
+{
+	ParamInfo* paramInfo = FindParamInfo(index);
+	if (paramInfo)
+		paramInfo->range = { min, max };
+}
+
+GetRangeStruct CFFGLPluginManager::GetParamRange(unsigned int index)
+{
+	GetRangeStruct result;
+	ParamInfo* paramInfo = FindParamInfo(index);
+	if (paramInfo)
+		result = {
+			*reinterpret_cast<FFUInt32*>( &paramInfo->range.min ),
+			*reinterpret_cast<FFUInt32*>( &paramInfo->range.max )
+		};
+	return result;
 }
 
 char* CFFGLPluginManager::GetParamName( unsigned int dwIndex )

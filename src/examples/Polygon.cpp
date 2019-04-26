@@ -58,11 +58,11 @@ PolygonRepeat::PolygonRepeat()
 void PolygonRepeat::update()
 {
 	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
-	float speed     = speedParam->getValueNormalised();
+	float speed     = speedParam->getRealValue();
 	relativeTime += deltaTime * speed;
 	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 	auto speedRotationParam = std::dynamic_pointer_cast< ParamRange >( getParam( "rotation_speed" ) );
-	float speedRotation     = speedRotationParam->getValueNormalised();
+	float speedRotation     = speedRotationParam->getRealValue();
 	relativeRotationTime += deltaTime * speedRotation;
 	glUniform1f( shader.FindUniform( "relativeRotationTime" ), relativeRotationTime );
 }

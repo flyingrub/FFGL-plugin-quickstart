@@ -95,7 +95,10 @@ public:
 	/// shader before drawing.
 	/// \param	param		The parameter to add
 	void addParam( Param::Ptr param );
-	/// This function handle the special case where the parameter is a ParamOption (When you habe the
+	/// This function handle the special case where the parameter is a ParamRange
+	/// \param	param		The parameter to add
+	void addParam( ParamRange::Ptr param );
+	/// This function handle the special case where the parameter is a ParamOption (When you have the
 	/// choice between different option).
 	/// \param	param		The parameter to add
 	void addParam( ParamOption::Ptr param );
@@ -170,7 +173,7 @@ protected:
 	)";
 	std::string vertexShaderCode;
 
-	// This function will consume the value for all ParamTrigger//
+	// This function will consume the value for all ParamTrigger
 	void consumeAllTrigger();
 };
 

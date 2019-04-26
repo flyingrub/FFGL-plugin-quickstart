@@ -88,9 +88,14 @@ public:
 	{
 	}
 
-	float getValueNormalised()
+	float getRealValue()
 	{
 		return utils::map( value, 0.0, 1.0, range.min, range.max );
+	}
+
+	Range getRange()
+	{
+		return range;
 	}
 
 private:
@@ -118,16 +123,16 @@ public:
 	{
 	}
 	ParamOption( std::string name, Options options, int defaultOption ) :
-		Param( name, FF_TYPE_OPTION, (float) defaultOption ),
+		Param( name, FF_TYPE_OPTION, (float)defaultOption ),
 		options( options )
 	{
-		setValue( (float) defaultOption );
+		setValue( (float)defaultOption );
 	}
 
 	void setValue( float _value ) override
 	{
 		options.size() <= _value ? value = 0 : value = _value;
-		currentOption = options[ (size_t) value ];
+		currentOption                                = options[ (size_t)value ];
 	}
 	bool isCurrentOption( std::string option )
 	{

@@ -96,7 +96,7 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 		{
 			auto range       = std::dynamic_pointer_cast< ParamRange >( params[ i ] );
 			std::string name = params[ i ]->getName();
-			float value      = range ? range->getValueNormalised() : params[ i ]->getValue();
+			float value      = range ? range->getRealValue() : params[ i ]->getValue();
 			glUniform1f( shader.FindUniform( name.c_str() ), value );
 		}
 		i += 1;
@@ -148,7 +148,7 @@ char* Plugin::GetParameterDisplay( unsigned int index )
 			return (char*)FF_FAIL;
 		static char displayValueBuffer[ 16 ];
 		auto range              = std::dynamic_pointer_cast< ParamRange >( params[ index - 1 ] );
-		float value             = range ? range->getValueNormalised() : params[ index - 1 ]->getValue();
+		float value             = range ? range->getRealValue() : params[ index - 1 ]->getValue();
 		std::string stringValue = std::to_string( value );
 		memset( displayValueBuffer, 0, sizeof( displayValueBuffer ) );
 		memcpy( displayValueBuffer, stringValue.c_str(), std::min( sizeof( displayValueBuffer ), stringValue.length() ) );
@@ -229,6 +229,13 @@ void Plugin::addParam( Param::Ptr param )
 {
 	params.push_back( param );
 	SetParamInfof( (unsigned int)params.size(), param->getName().c_str(), param->getType() );
+}
+
+void Plugin::addParam( ParamRange::Ptr param )
+{
+	params.push_back( param );
+	SetParamInfof( (unsigned int)params.size(), param->getName().c_str(), param->getType() );
+	SetParamRange( (unsigned int)params.size(), param->getRange().min, param->getRange().max);
 }
 
 void Plugin::addParam( ParamOption::Ptr param )

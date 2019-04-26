@@ -133,6 +133,8 @@ static const FFUInt32 FF_GETPLUGINSHORTNAME            = 33;
 static const FFUInt32 FF_SET_BEATINFO                  = 38;
 static const FFUInt32 FF_SET_HOSTINFO                  = 39;
 static const FFUInt32 FF_SET_SAMPLERATE                = 40;
+static const FFUInt32 FF_GET_RANGE                     = 41;
+
 
 //Previously used function codes that are no longer in use. Should prevent using
 //these numbers for new function codes.
@@ -259,6 +261,12 @@ typedef struct SetHostinfoStructTag
 	const char* name;
 	const char* version;
 } SetHostinfoStruct;
+
+typedef struct GetRangeStructTag
+{
+	FFUInt32 min;
+	FFUInt32 max;
+} GetRangeStruct;
 
 //FFGLViewportStruct (for InstantiateGL)
 typedef struct FFGLViewportStructTag

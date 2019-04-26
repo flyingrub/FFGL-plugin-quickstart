@@ -28,7 +28,7 @@ Strobotime::Strobotime()
 
 void Strobotime::update()
 {
-	unsigned long v = (unsigned long)speed->getValueNormalised();
+	unsigned long v = (unsigned long)speed->getRealValue();
 	// get upper powe of two
 	v--;
 	v |= v >> 1;

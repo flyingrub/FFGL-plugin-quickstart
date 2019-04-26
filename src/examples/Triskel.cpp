@@ -39,7 +39,7 @@ Triskel::Triskel()
 void Triskel::update()
 {
 	auto speedParam = std::dynamic_pointer_cast< ParamRange >( getParam( "speed" ) );
-	float speed     = speedParam->getValueNormalised();
+	float speed     = speedParam->getRealValue();
 	relativeTime += deltaTime * speed;
 	glUniform1f( shader.FindUniform( "relativeTime" ), relativeTime );
 }
