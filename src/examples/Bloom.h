@@ -14,6 +14,7 @@ public:
 private:
 	ParamRange::Ptr threshold;
 	ParamRange::Ptr radius;
+	ParamRange::Ptr intensity;
 	FFGLShader downSampleFilter;
 	FFGLShader upSampleFilter;
 	FFGLShader final;

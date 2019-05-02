@@ -11,10 +11,10 @@ static PluginInstance p = Effect::createPlugin< Bloom >( {
 static const std::string thresholdShader = R"(
 void main()
 {
-	vec4 c = texture( inputTexture, i_uv ); // to linear
-	float brightness = max(max(c.r, c.g), c.b) - threshold;
-	c.rgb = pow(c.rgb,vec3(2.2));
-	fragColor = vec4(c*brightness);
+	vec4 c = texture( inputTexture, i_uv );
+	float brightness = max(max(c.r, c.g), c.b);
+	c.rgb = mix(vec3(0), c.rgb, step(threshold, brightness));
+	fragColor = vec4(c);
 }
 )";
 
@@ -85,9 +85,8 @@ void main()
 	col += texture( inputTexture, i_uv + d.xw );
 	col += texture( inputTexture, i_uv + d.zw );
 	col /= 4.;
-	col = base + col * intensity;
-	col.rgb = pow(col.rgb/81.0,vec3(1.0/2.2));
-	fragColor = vec4(col);
+	vec3 outColor = base.rgb + col.rgb * intensity;
+	fragColor = vec4( col.rgb * intensity, base.a);
 }
 )";
 
@@ -96,7 +95,7 @@ Bloom::Bloom()
 	setFragmentShader( thresholdShader );
 	addParam( threshold = ParamRange::create( "threshold", 0.8f, { 0, 1 } ) );
 	addParam( radius = ParamRange::create( "radius", 2.5f, { 1, 7 } ) );
-	addParam( ParamRange::create( "intensity", 0.8f, { 0, 1 } ) );
+	addParam( intensity = ParamRange::create( "intensity", 0.8f, { 0, 1 } ) );
 }
 
 FFResult Bloom::init()
@@ -139,8 +138,8 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	FFResult result = Effect::render( inputTextures );
 	if( result == FF_FAIL )
 		return FF_FAIL;
-	FFGLFBO* last = &thresholdFBO;
 
+	FFGLFBO* last = &thresholdFBO;
 	// Create a mipmap pyramid
 	downSampleFilter.Use();
 	downSampleFilter.Set( "maxUV", 1.f, 1.f );
@@ -174,6 +173,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	final.Set( "maxUV", 1.f, 1.f );
 	final.Bind( "inputTexture", 0, last->GetTextureInfo() );
 	final.Bind( "baseTexture", 1, *inputTextures->inputTextures[ 0 ] );
+	final.Set( "intensity", intensity->getRealValue() );
 	final.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
 	final.Set( "sampleScale", (float)sampleScale );
 	quad.Draw();
