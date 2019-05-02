@@ -12,7 +12,7 @@ public:
 	int BindAsRenderTarget();
 	int UnbindAsRenderTarget( GLuint hostFbo );
 
-	FFGLTextureStruct GetTextureInfo();
+	FFGLTextureStruct GetTextureInfo() const;
 	void FreeResources();
 
 	GLuint GetWidth()
@@ -23,7 +23,7 @@ public:
 	{
 		return m_height;
 	}
-	GLuint GetFBOHandle()
+	GLuint GetFBOHandle() const
 	{
 		return m_fboHandle;
 	}

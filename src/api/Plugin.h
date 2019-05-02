@@ -38,7 +38,7 @@ public:
 	FFResult InitGL( const FFGLViewportStruct* viewPort ) override;
 	/// Implementation of the FFGL ProcessOpenGL instance specific function. It is in this function that
 	/// the actual rendering occur. This function takes care of sending all the parameter to the shader.
-	/// 
+	///
 	/// \param	inputTextures	This is a parameter containing info about input texture if there is some.
 	/// \return					This implementation always returns FF_SUCCESS.
 	FFResult ProcessOpenGL( ProcessOpenGLStruct* inputTextures ) override;
@@ -47,13 +47,19 @@ public:
 	///
 	/// \return					This implementation always returns FF_SUCCESS.
 	FFResult DeInitGL() override;
-	
-	/// This function is called by InitGL just after the main shader managed to compile.
-	virtual void init(){};
+
 	/// This function is called by ProcessOpenGL just before the main shader draw call.
+	virtual FFResult init()
+	{
+		return FF_SUCCESS;
+	};
 	virtual void update(){};
-	/// This function is called by DeInitGL before freeing any ressources.
+	virtual FFResult render( ProcessOpenGLStruct* inputTextures );
 	virtual void clean(){};
+
+	std::string createFragmentShader( std::string base );
+	void updateAudioAndTime();
+	void sendParams( ffglex::FFGLShader& shader );
 
 	/// This function is called by the host to get a string representation of any parameter.
 	/// It will just return the value of the current param as a char*.
@@ -86,8 +92,8 @@ public:
 	/// construct the full fragment shader. In order to simplify the development of plugin
 	/// it is InitGL that takes care of defining all the parameters so that the shader can acces
 	/// them.
-	/// \param	fShader		The fragment shader
-	void setFragmentShader( std::string fShader );
+	/// \param	base		The fragment shader
+	void setFragmentShader( std::string base );
 	/// This function allows you to add a new parameter to the plugin. There is differents kind of
 	/// parameters available, you can check them in Params.h. Adding a parameter allows the plugin to be
 	/// aware of them, make them available to the host and take of all the communication with it.
@@ -144,14 +150,15 @@ public:
 	void include( std::set< shader::snippet_id > snippets );
 
 protected:
-	std::string fragmentShader;
+	std::string fragmentShaderBase;
 	std::vector< Param::Ptr > params;
 	ffglex::FFGLShader shader;
 	ffglex::FFGLScreenQuad quad;
 
-	float deltaTime  = 0;
-	float lastUpdate = 0;
-	int frame        = 0;
+	float timeNow                                                         = 0;
+	float deltaTime                                                       = 0;
+	float lastUpdate                                                      = 0;
+	int frame                                                             = 0;
 	std::chrono::time_point< std::chrono::high_resolution_clock > t_start = std::chrono::high_resolution_clock::now();
 	Audio audio;
 	utils::Random random;

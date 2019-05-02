@@ -1,6 +1,5 @@
 #include "Plugin.h"
 using namespace ffglex;
-
 static const int FFT_INPUT_INDEX = 0;
 
 Plugin::Plugin()
@@ -13,6 +12,54 @@ Plugin::~Plugin()
 }
 
 FFResult Plugin::InitGL( const FFGLViewportStruct* viewPort )
+{
+	std::string fragmentShaderCode = createFragmentShader( fragmentShaderBase );
+	if( !shader.Compile( vertexShaderCode, fragmentShaderCode ) )
+	{
+		DeInitGL();
+		return FF_FAIL;
+	}
+	if( !quad.Initialise() )
+	{
+		DeInitGL();
+		return FF_FAIL;
+	}
+	if( init() == FF_FAIL )
+	{
+		DeInitGL();
+		return FF_FAIL;
+	}
+	return CFreeFrameGLPlugin::InitGL( viewPort );
+}
+
+FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
+{
+	updateAudioAndTime();
+	sendParams( shader );
+	update();
+	FFResult result = render(inputTextures);
+	consumeAllTrigger();
+	resetOpenGLState();
+
+	return result;
+}
+
+FFResult Plugin::DeInitGL()
+{
+	shader.FreeGLResources();
+	quad.Release();
+	clean();
+	return FF_SUCCESS;
+}
+
+FFResult Plugin::render( ProcessOpenGLStruct* inputTextures )
+{
+	shader.Use();
+	quad.Draw();
+	return FF_SUCCESS;
+}
+
+std::string Plugin::createFragmentShader( std::string base )
 {
 	std::string fragmentShaderCode = fragmentShaderCodeStart;
 	int i                          = 0;
@@ -39,29 +86,32 @@ FFResult Plugin::InitGL( const FFGLViewportStruct* viewPort )
 		fragmentShaderCode += shader::snippets.find( snippet )->second;
 	}
 
-	fragmentShaderCode += fragmentShader;
-	if( !shader.Compile( vertexShaderCode, fragmentShaderCode ) )
-	{
-		DeInitGL();
-		return FF_FAIL;
-	}
-	if( !quad.Initialise() )
-	{
-		DeInitGL();
-		return FF_FAIL;
-	}
-	init();
-
-	return CFreeFrameGLPlugin::InitGL( viewPort );
+	fragmentShaderCode += base;
+	return fragmentShaderCode;
 }
 
-FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
+void Plugin::updateAudioAndTime()
 {
-	ScopedShaderBinding shaderBinding( shader.GetGLID() );
+	// Update time and frame data
+	frame++;
+	auto t_now    = std::chrono::high_resolution_clock::now();
+	float timeNow = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
+	deltaTime     = timeNow - lastUpdate;
+	lastUpdate    = timeNow;
+	// Update FFT data
+	std::vector< float > fftData( Audio::getBufferSize() );
+	const ParamInfo* fftInfo = FindParamInfo( FFT_INPUT_INDEX );
+	for( size_t index = 0; index < Audio::getBufferSize(); ++index )
+		fftData[ index ] = fftInfo->elements[ index ].value;
+	audio.update( fftData );
+}
+
+void Plugin::sendParams( FFGLShader& shader )
+{
+	shader.Use();
 	// Clamp to edge is broken in Resolume right now so disable it
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
-
 	int i = 0;
 	while( i < params.size() )
 	{
@@ -71,7 +121,7 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 			float r          = params[ i ]->getValue();
 			float g          = params[ i + 1 ]->getValue();
 			float b          = params[ i + 2 ]->getValue();
-			glUniform3f( shader.FindUniform( name.c_str() ), r, g, b );
+			shader.Set( name.c_str(), r, g, b );
 			i += 2;
 		}
 		else if( isHueColor( i ) )
@@ -84,60 +134,37 @@ FFResult Plugin::ProcessOpenGL( ProcessOpenGLStruct* inputTextures )
 			//we need to make sure the hue doesn't reach 1.0f, otherwise the result will be pink and not red how it should be
 			hue = ( hue == 1.0f ) ? 0.0f : hue;
 			HSVtoRGB( hue, saturation, brightness, rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
-			glUniform3f( shader.FindUniform( name.c_str() ), rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
+			shader.Set( name.c_str(), rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] );
 			i += 2;
 		}
 		if( params[ i ]->getType() == FF_TYPE_BOOLEAN || params[ i ]->getType() == FF_TYPE_EVENT )
 		{
 			std::string name = params[ i ]->getName();
-			glUniform1i( shader.FindUniform( name.c_str() ), (bool) params[ i ]->getValue() );
+			shader.Set( name.c_str(), (bool)params[ i ]->getValue() );
 		}
 		else
 		{
 			auto range       = std::dynamic_pointer_cast< ParamRange >( params[ i ] );
+			bool isInteger   = params[ i ]->getType() == FF_TYPE_INTEGER;
 			std::string name = params[ i ]->getName();
-			float value      = range ? range->getRealValue() : params[ i ]->getValue();
-			glUniform1f( shader.FindUniform( name.c_str() ), value );
+			float value      = range && !isInteger ? range->getRealValue() : params[ i ]->getValue();
+			shader.Set( name.c_str(), value );
 		}
 		i += 1;
 	}
-	frame++;
-	auto t_now      = std::chrono::high_resolution_clock::now();
-	float timeNow   = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
-	deltaTime = timeNow - lastUpdate;
-	lastUpdate      = timeNow;
 
-	glUniform1f( shader.FindUniform( "time" ), timeNow );
-	glUniform1f( shader.FindUniform( "deltaTime" ), deltaTime );
-	glUniform1i( shader.FindUniform( "frame" ), frame );
-	glUniform2f( shader.FindUniform( "resolution" ), (float) currentViewport.width, (float) currentViewport.height );
+	shader.Set( "time", timeNow );
+	shader.Set( "deltaTime", deltaTime );
+	shader.Set( "frame", frame );
+	shader.Set( "resolution", (float)currentViewport.width, (float)currentViewport.height );
 
-	std::vector< float > fftData( Audio::getBufferSize() );
-	const ParamInfo* fftInfo = FindParamInfo( FFT_INPUT_INDEX );
-	for( size_t index = 0; index < Audio::getBufferSize(); ++index )
-		fftData[ index ] = fftInfo->elements[ index ].value;
-	audio.update( fftData );
-	glUniform1f( shader.FindUniform( "audioVolume" ), audio.getVolume() );
-	glUniform1f( shader.FindUniform( "audioBass" ), audio.getBass() );
-	glUniform1f( shader.FindUniform( "audioMed" ), audio.getMed() );
-	glUniform1f( shader.FindUniform( "audioHigh" ), audio.getHigh() );
+	shader.Set( "audioVolume", audio.getVolume() );
+	shader.Set( "audioBass", audio.getBass() );
+	shader.Set( "audioMed", audio.getMed() );
+	shader.Set( "audioHigh", audio.getHigh() );
 
-	glUniform1f( shader.FindUniform( "bpm" ), bpm );
-	glUniform1f( shader.FindUniform( "phase" ), barPhase );
-
-	update();
-	quad.Draw();
-	consumeAllTrigger();
-
-	return FF_SUCCESS;
-}
-
-FFResult Plugin::DeInitGL()
-{
-	clean();
-	shader.FreeGLResources();
-	quad.Release();
-	return FF_SUCCESS;
+	shader.Set( "bpm", bpm );
+	shader.Set( "phase", barPhase );
 }
 
 char* Plugin::GetParameterDisplay( unsigned int index )
@@ -220,9 +247,9 @@ void Plugin::SetSampleRate( unsigned int _sampleRate )
 	audio.setSampleRate( sampleRate );
 }
 
-void Plugin::setFragmentShader( std::string fShader )
+void Plugin::setFragmentShader( std::string base )
 {
-	fragmentShader = fShader;
+	fragmentShaderBase = base;
 }
 
 void Plugin::addParam( Param::Ptr param )

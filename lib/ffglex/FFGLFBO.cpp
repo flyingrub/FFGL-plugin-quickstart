@@ -133,7 +133,7 @@ int FFGLFBO::UnbindAsRenderTarget( GLuint hostFbo )
 	return 1;
 }
 
-FFGLTextureStruct FFGLFBO::GetTextureInfo()
+FFGLTextureStruct FFGLFBO::GetTextureInfo() const
 {
 	FFGLTextureStruct t;
 

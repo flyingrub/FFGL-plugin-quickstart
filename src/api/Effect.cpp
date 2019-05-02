@@ -7,8 +7,6 @@ Effect::Effect()
 	SetMaxInputs( 1 );
 	fragmentShaderCodeStart += R"(
 		in vec2 i_uv;
-		uniform vec2 MaxUV;
-
 		uniform sampler2D inputTexture;
 	)";
 	vertexShaderCode = R"(
@@ -32,23 +30,17 @@ Effect::~Effect()
 {
 }
 
-FFResult Effect::ProcessOpenGL( ProcessOpenGLStruct* pGL )
+FFResult Effect::render( ProcessOpenGLStruct* inputTextures )
 {
-	if( pGL->numInputTextures < 1 )
+	if( inputTextures->numInputTextures < 1 )
 		return FF_FAIL;
-	if( pGL->inputTextures[ 0 ] == NULL )
+	if( inputTextures->inputTextures[ 0 ] == NULL )
 		return FF_FAIL;
 
-	ScopedShaderBinding shaderBinding( shader.GetGLID() );
-	glUniform1i( shader.FindUniform( "inputTexture" ), 0 );
-
-	FFGLTextureStruct& Texture = *( pGL->inputTextures[ 0 ] );
-
-	//The input texture's dimension might change each frame and so might the content area.
-	//We're adopting the texture's maxUV using a uniform because that way we dont have to update our vertex buffer each frame.
-	FFGLTexCoords maxCoords = GetMaxGLTexCoords( Texture );
-	glUniform2f( shader.FindUniform( "maxUV" ), maxCoords.s, maxCoords.t );
-	ScopedSamplerActivation activateSampler( 0 );
-	Scoped2DTextureBinding textureBinding( Texture.Handle );
-	return Plugin::ProcessOpenGL( pGL );
+	shader.Use();
+	shader.Bind("inputTexture", 0, *inputTextures->inputTextures[ 0 ] );
+	FFGLTexCoords maxCoords = GetMaxGLTexCoords( *inputTextures->inputTextures[ 0 ] );
+	shader.Set( "maxUV", maxCoords.s, maxCoords.t );
+	quad.Draw();
+	return FF_SUCCESS;
 }

@@ -50,7 +50,7 @@ PolygonRepeat::PolygonRepeat()
 	setFragmentShader( fshader );
 	addParam( ParamRange::create( "repeat", 0.05f, { 0.0f, 1.0f } ) );
 	addParam( ParamRange::create( "speed", 0.4f, { -.5f, .5f } ) );
-	addParam( ParamRange::create( "sides", 0.3f, { 1.0f, 10.0f } ) );
+	addParam( ParamRange::createInteger( "sides", 3, { -20, 200 } ) );
 	addParam( ParamRange::create( "width", 0.5f, { 0.0f, 2.0f } ) );
 	addParam( ParamRange::create( "rotation_speed", 0.5, { -2.0f, 2.0f } ) );
 }

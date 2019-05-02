@@ -9,7 +9,7 @@ public:
 	template< typename PluginType >
 	static PluginInstance createPlugin( PluginInfo infos );
 
-	FFResult ProcessOpenGL( ProcessOpenGLStruct* pGL ) override;
+	FFResult render( ProcessOpenGLStruct* pGL ) override;
 };
 
 template< typename PluginType >
