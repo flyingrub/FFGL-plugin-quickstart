@@ -178,7 +178,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	final.Set( "sampleScale", (float)sampleScale );
 	quad.Draw();
 
-	/// Free all allocated ressource
+	// Free all allocated ressource
 	for( int i = 0; i < iterations; i++ )
 	{
 		mipmaps[ i ].FreeResources();

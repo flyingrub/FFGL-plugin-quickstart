@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triskel", "Triskel.vcxproj"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bloom", "Bloom.vcxproj", "{E78E9057-5B9B-4AC5-A6F3-B3D633BD53B2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BGR", "BGR.vcxproj", "{333A35D0-3C70-4D3A-AA58-8E3FB56C6229}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -87,6 +89,10 @@ Global
 		{E78E9057-5B9B-4AC5-A6F3-B3D633BD53B2}.Debug|x64.Build.0 = Debug|x64
 		{E78E9057-5B9B-4AC5-A6F3-B3D633BD53B2}.Release|x64.ActiveCfg = Release|x64
 		{E78E9057-5B9B-4AC5-A6F3-B3D633BD53B2}.Release|x64.Build.0 = Release|x64
+		{333A35D0-3C70-4D3A-AA58-8E3FB56C6229}.Debug|x64.ActiveCfg = Debug|x64
+		{333A35D0-3C70-4D3A-AA58-8E3FB56C6229}.Debug|x64.Build.0 = Debug|x64
+		{333A35D0-3C70-4D3A-AA58-8E3FB56C6229}.Release|x64.ActiveCfg = Release|x64
+		{333A35D0-3C70-4D3A-AA58-8E3FB56C6229}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
