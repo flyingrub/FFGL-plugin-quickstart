@@ -72,6 +72,7 @@ uniform sampler2D inputTexture;
 uniform sampler2D baseTexture;
 
 in vec2 i_uv;
+uniform vec2 maxUV;
 uniform float intensity;
 uniform float sampleScale;
 uniform vec2 texelSize;
@@ -80,13 +81,14 @@ void main()
 {
 	vec4 base = texture( baseTexture, i_uv );
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
-	vec4 col = texture( inputTexture, i_uv + d.xy );
-	col += texture( inputTexture, i_uv + d.zy );
-	col += texture( inputTexture, i_uv + d.xw );
-	col += texture( inputTexture, i_uv + d.zw );
+	vec2 uv = i_uv ;
+	vec4 col = texture( inputTexture, uv + d.xy );
+	col += texture( inputTexture, uv + d.zy );
+	col += texture( inputTexture, uv + d.xw );
+	col += texture( inputTexture, uv + d.zw );
 	col /= 4.;
 	vec3 outColor = base.rgb + col.rgb * intensity;
-	fragColor = vec4( col.rgb * intensity, base.a);
+	fragColor = vec4(  col.rgb * intensity, base.a);
 }
 )";
 
@@ -125,7 +127,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	// determine the iteration count
 	double logh        = std::log( currentViewport.height ) / std::log( 2 ) + radius->getRealValue() - 8;
 	int logh_i        = (int)logh;
-	int iterations    = std::clamp( logh_i, 1, kMaxIterations );
+	int iterations     = std::clamp( logh_i, 1, kMaxIterations );
 	double sampleScale = 0.5f + logh - logh_i;
 
 	FFGLFBO thresholdFBO;
@@ -133,7 +135,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	FFGLFBO combine[ kMaxIterations ];
 
 	// Prefilter pixel above a certain brightness threshold
-	thresholdFBO.Create( currentViewport.width, currentViewport.height );
+	thresholdFBO.Create( currentViewport.width, currentViewport.height, GL_RGBA16F );
 	thresholdFBO.BindAsRenderTarget();
 	FFResult result = Effect::render( inputTextures );
 	if( result == FF_FAIL )
@@ -145,32 +147,38 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	downSampleFilter.Set( "maxUV", 1.f, 1.f );
 	for( int i = 0; i < iterations; i++ )
 	{
-		downSampleFilter.Bind( "inputTexture", 0, last->GetTextureInfo() );
-		mipmaps[ i ].Create( last->GetWidth() / 2, last->GetHeight() / 2 );
+		mipmaps[ i ].Create( last->GetWidth() / 2, last->GetHeight() / 2, GL_RGBA16F );
 		mipmaps[ i ].BindAsRenderTarget();
-		downSampleFilter.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
+		mipmaps[ i ].ResizeViewPort();
+		float texelSize[ 2 ] = { 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() };
+		upSampleFilter.Set( "texelSize", texelSize[ 0 ], texelSize[ 1 ] );
+		downSampleFilter.Bind( "inputTexture", 0, last->GetTextureInfo() );
 		quad.Draw();
 		last = &mipmaps[ i ];
 	}
 
 	// upsample and combine loop
 	upSampleFilter.Use();
-	upSampleFilter.Set( "maxUV", 1.f, 1.f );
+	downSampleFilter.Set( "maxUV", 1.f, 1.f );
 	for( int i = iterations - 2; i >= 0; i-- )
 	{
+		combine[ i ].Create( mipmaps[ i ].GetWidth(), mipmaps[ i ].GetHeight(), GL_RGBA16F );
+		combine[ i ].BindAsRenderTarget();
+		combine[ i ].ResizeViewPort();
+		float texelSize[ 2 ] = { 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() };
+		upSampleFilter.Set( "texelSize", texelSize[0], texelSize[1]);
+		upSampleFilter.Set( "sampleScale", (float)sampleScale );
 		upSampleFilter.Bind( "inputTexture", 0, last->GetTextureInfo() );
 		upSampleFilter.Bind( "baseTexture", 1, mipmaps[ i ].GetTextureInfo() );
-		combine[ i ].Create( mipmaps[ i ].GetWidth(), mipmaps[ i ].GetHeight());
-		combine[ i ].BindAsRenderTarget();
-		upSampleFilter.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
-		upSampleFilter.Set( "sampleScale", (float)sampleScale );
 		quad.Draw();
 		last = &combine[ i ];
 	}
 
 	glBindFramebuffer( GL_FRAMEBUFFER, inputTextures->HostFBO );
+	glViewport( 0, 0, currentViewport.width, currentViewport.height );
 	final.Use();
-	final.Set( "maxUV", 1.f, 1.f );
+	FFGLTexCoords maxCoords = GetMaxGLTexCoords( *inputTextures->inputTextures[ 0 ] );
+	final.Set( "maxUV", 1.f, 1.f );// maxCoords.s, maxCoords.t );
 	final.Bind( "inputTexture", 0, last->GetTextureInfo() );
 	final.Bind( "baseTexture", 1, *inputTextures->inputTextures[ 0 ] );
 	final.Set( "intensity", intensity->getRealValue() );
