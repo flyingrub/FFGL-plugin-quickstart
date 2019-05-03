@@ -9,12 +9,25 @@ static PluginInstance p = Effect::createPlugin< Bloom >( {
 } );
 
 static const std::string thresholdShader = R"(
+uniform vec2 texelSize;
+
+vec3 Median(vec3 a, vec3 b, vec3 c)
+{
+    return a + b + c - min(min(a, b), c) - max(max(a, b), c);
+}
+
 void main()
 {
-	vec4 c = texture( inputTexture, i_uv );
-	float brightness = max(max(c.r, c.g), c.b);
-	c.rgb = mix(vec3(0), c.rgb, step(threshold, brightness));
-	fragColor = vec4(c);
+	vec3 d = texelSize.xyx * vec3(1, 1, 0);
+    vec4 s0 = texture(inputTexture, i_uv);
+    vec3 s1 = texture(inputTexture, i_uv - d.xz).rgb;
+    vec3 s2 = texture(inputTexture, i_uv + d.xz).rgb;
+    vec3 s3 = texture(inputTexture, i_uv - d.zy).rgb;
+    vec3 s4 = texture(inputTexture, i_uv + d.zy).rgb;
+	vec3 col = Median(Median(s0.rgb, s1, s2), s3, s4);
+	float brightness = max(max(col.r, col.g), col.b);
+	col.rgb = mix(vec3(0), col.rgb, step(threshold, brightness));
+	fragColor = vec4(col.rgb, s0.a);
 }
 )";
 
@@ -25,16 +38,42 @@ out vec4 fragColor;
 
 in vec2 i_uv;
 uniform vec2 texelSize;
-
 uniform sampler2D inputTexture;
-void main()
+
+float Brightness(vec4 c)
 {
+    return max(max(c.r, c.g), c.b);
+}
+
+vec4 getDownSampleAntiFlicker() {
+	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1);
+	vec4 s1 = texture( inputTexture, i_uv + d.xy );
+	vec4 s2 = texture( inputTexture, i_uv + d.zy );
+	vec4 s3 = texture( inputTexture, i_uv + d.xw );
+	vec4 s4 = texture( inputTexture, i_uv + d.zw );
+
+	// Karis's luma weighted average (using brightness instead of luma)
+    float s1w = 1 / (Brightness(s1) + 1);
+    float s2w = 1 / (Brightness(s2) + 1);
+    float s3w = 1 / (Brightness(s3) + 1);
+    float s4w = 1 / (Brightness(s4) + 1);
+    float one_div_wsum = 1 / (s1w + s2w + s3w + s4w);
+
+	return (s1 * s1w + s2 * s2w + s3 * s3w + s4 * s4w) * one_div_wsum;
+}
+
+vec4 getDownSample() {
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1);
 	vec4 col = texture( inputTexture, i_uv + d.xy );
 	col += texture( inputTexture, i_uv + d.zy );
 	col += texture( inputTexture, i_uv + d.xw );
 	col += texture( inputTexture, i_uv + d.zw );
-	col /= 4.;
+	return col / 4.;
+}
+
+void main()
+{
+	vec4 col = getDownSampleAntiFlicker();
 	fragColor = vec4(col);
 }
 )";
@@ -51,15 +90,36 @@ in vec2 i_uv;
 uniform float sampleScale;
 uniform vec2 texelSize;
 
+vec4 getUpSample(vec2 uv) {
+	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
+	vec4 col = texture( inputTexture, uv + d.xy );
+	col += texture( inputTexture, uv + d.zy );
+	col += texture( inputTexture, uv + d.xw );
+	col += texture( inputTexture, uv + d.zw );
+	return col / 4.;
+}
+
+vec4 getUpSampleHighQ(vec2 uv) {
+	vec4 d = texelSize.xyxy * vec4(1, 1, -1, 0) * sampleScale;
+    vec4 col = texture( inputTexture, uv - d.xy );
+    col += texture( inputTexture, uv - d.wy ) * 2;
+    col += texture( inputTexture, uv - d.zy );
+
+    col += texture( inputTexture, uv + d.zw ) * 2;
+    col += texture( inputTexture, uv        ) * 4;
+    col += texture( inputTexture, uv + d.xw ) * 2;
+
+    col += texture( inputTexture, uv + d.zy );
+    col += texture( inputTexture, uv + d.wy ) * 2;
+    col += texture( inputTexture, uv + d.xy );
+
+	return col * (1.0 / 16);
+}
+
 void main()
 {
 	vec4 base = texture( baseTexture, i_uv );
-	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
-	vec4 col = texture( inputTexture, i_uv + d.xy );
-	col += texture( inputTexture, i_uv + d.zy );
-	col += texture( inputTexture, i_uv + d.xw );
-	col += texture( inputTexture, i_uv + d.zw );
-	col /= 4.;
+	vec4 col = getUpSampleHighQ(i_uv);
 	fragColor = vec4(base.rgb + col.rgb,base.a);
 }
 )";
@@ -77,16 +137,38 @@ uniform float intensity;
 uniform float sampleScale;
 uniform vec2 texelSize;
 
+vec4 getUpSample(vec2 uv) {
+	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
+	vec4 col = texture( inputTexture, uv + d.xy );
+	col += texture( inputTexture, uv + d.zy );
+	col += texture( inputTexture, uv + d.xw );
+	col += texture( inputTexture, uv + d.zw );
+	return col / 4.;
+}
+
+vec4 getUpSampleHighQ(vec2 uv) {
+	vec4 d = texelSize.xyxy * vec4(1, 1, -1, 0) * sampleScale;
+    vec4 col = texture( inputTexture, uv - d.xy );
+    col += texture( inputTexture, uv - d.wy ) * 2;
+    col += texture( inputTexture, uv - d.zy );
+
+    col += texture( inputTexture, uv + d.zw ) * 2;
+    col += texture( inputTexture, uv        ) * 4;
+    col += texture( inputTexture, uv + d.xw ) * 2;
+
+    col += texture( inputTexture, uv + d.zy );
+    col += texture( inputTexture, uv + d.wy ) * 2;
+    col += texture( inputTexture, uv + d.xy );
+
+	return col * (1.0 / 16);
+}
+
 void main()
 {
 	vec4 base = texture( baseTexture, i_uv );
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
 	vec2 uv = i_uv / maxUV ;
-	vec4 col = texture( inputTexture, uv + d.xy );
-	col += texture( inputTexture, uv + d.zy );
-	col += texture( inputTexture, uv + d.xw );
-	col += texture( inputTexture, uv + d.zw );
-	col /= 4.;
+	vec4 col = getUpSampleHighQ(uv);
 	vec3 outColor = base.rgb + col.rgb * intensity;
 	fragColor = vec4( outColor, base.a);
 }
@@ -98,6 +180,7 @@ Bloom::Bloom()
 	addParam( threshold = ParamRange::create( "threshold", 0.8f, { 0, 1 } ) );
 	addParam( radius = ParamRange::create( "radius", 2.5f, { 1, 7 } ) );
 	addParam( intensity = ParamRange::create( "intensity", 0.8f, { 0, 1 } ) );
+	addParam( hq = ParamBool::create( "hq" ) );
 }
 
 FFResult Bloom::init()
