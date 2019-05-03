@@ -81,14 +81,14 @@ void main()
 {
 	vec4 base = texture( baseTexture, i_uv );
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
-	vec2 uv = i_uv ;
+	vec2 uv = i_uv / maxUV ;
 	vec4 col = texture( inputTexture, uv + d.xy );
 	col += texture( inputTexture, uv + d.zy );
 	col += texture( inputTexture, uv + d.xw );
 	col += texture( inputTexture, uv + d.zw );
 	col /= 4.;
 	vec3 outColor = base.rgb + col.rgb * intensity;
-	fragColor = vec4(  col.rgb * intensity, base.a);
+	fragColor = vec4( outColor, base.a);
 }
 )";
 
@@ -159,14 +159,13 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 
 	// upsample and combine loop
 	upSampleFilter.Use();
-	downSampleFilter.Set( "maxUV", 1.f, 1.f );
+	upSampleFilter.Set( "maxUV", 1.f, 1.f );
 	for( int i = iterations - 2; i >= 0; i-- )
 	{
 		combine[ i ].Create( mipmaps[ i ].GetWidth(), mipmaps[ i ].GetHeight(), GL_RGBA16F );
 		combine[ i ].BindAsRenderTarget();
 		combine[ i ].ResizeViewPort();
-		float texelSize[ 2 ] = { 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() };
-		upSampleFilter.Set( "texelSize", texelSize[0], texelSize[1]);
+		upSampleFilter.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
 		upSampleFilter.Set( "sampleScale", (float)sampleScale );
 		upSampleFilter.Bind( "inputTexture", 0, last->GetTextureInfo() );
 		upSampleFilter.Bind( "baseTexture", 1, mipmaps[ i ].GetTextureInfo() );
@@ -178,7 +177,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	glViewport( 0, 0, currentViewport.width, currentViewport.height );
 	final.Use();
 	FFGLTexCoords maxCoords = GetMaxGLTexCoords( *inputTextures->inputTextures[ 0 ] );
-	final.Set( "maxUV", 1.f, 1.f );// maxCoords.s, maxCoords.t );
+	final.Set( "maxUV", maxCoords.s, maxCoords.t );
 	final.Bind( "inputTexture", 0, last->GetTextureInfo() );
 	final.Bind( "baseTexture", 1, *inputTextures->inputTextures[ 0 ] );
 	final.Set( "intensity", intensity->getRealValue() );
