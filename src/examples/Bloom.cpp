@@ -220,11 +220,13 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	// Prefilter pixel above a certain brightness threshold
 	thresholdFBO.Create( currentViewport.width, currentViewport.height, GL_RGBA16F );
 	thresholdFBO.BindAsRenderTarget();
+	FFGLFBO* last = &thresholdFBO;
+	shader.Use();
+	shader.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
 	FFResult result = Effect::render( inputTextures );
 	if( result == FF_FAIL )
 		return FF_FAIL;
 
-	FFGLFBO* last = &thresholdFBO;
 	// Create a mipmap pyramid
 	downSampleFilter.Use();
 	downSampleFilter.Set( "maxUV", 1.f, 1.f );
@@ -233,8 +235,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 		mipmaps[ i ].Create( last->GetWidth() / 2, last->GetHeight() / 2, GL_RGBA16F );
 		mipmaps[ i ].BindAsRenderTarget();
 		mipmaps[ i ].ResizeViewPort();
-		float texelSize[ 2 ] = { 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() };
-		upSampleFilter.Set( "texelSize", texelSize[ 0 ], texelSize[ 1 ] );
+		downSampleFilter.Set( "texelSize", 1.0f / (float)last->GetWidth(), 1.0f / (float)last->GetHeight() );
 		downSampleFilter.Bind( "inputTexture", 0, last->GetTextureInfo() );
 		quad.Draw();
 		last = &mipmaps[ i ];

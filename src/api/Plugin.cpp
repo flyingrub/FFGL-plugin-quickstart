@@ -95,7 +95,7 @@ void Plugin::updateAudioAndTime()
 	// Update time and frame data
 	frame++;
 	auto t_now    = std::chrono::high_resolution_clock::now();
-	float timeNow = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
+	timeNow = std::chrono::duration< float, std::milli >( t_now - t_start ).count() / 1000.0f;
 	deltaTime     = timeNow - lastUpdate;
 	lastUpdate    = timeNow;
 	// Update FFT data
