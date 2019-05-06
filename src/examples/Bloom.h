@@ -16,6 +16,7 @@ private:
 	ParamRange::Ptr radius;
 	ParamRange::Ptr intensity;
 	ParamBool::Ptr hq;
+	ParamBool::Ptr antiFlicker;
 	ParamRange::Ptr jitter;
 	FFGLShader downSampleFilter;
 	FFGLShader upSampleFilter;

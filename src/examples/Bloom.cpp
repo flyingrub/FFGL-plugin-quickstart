@@ -26,7 +26,7 @@ void main()
     vec3 s4 = texture(inputTexture, i_uv + d.zy).rgb;
 	vec3 col = Median(Median(s0.rgb, s1, s2), s3, s4);
 	float brightness = max(max(col.r, col.g), col.b);
-	col.rgb = mix(vec3(0), col.rgb, step(threshold, brightness));
+	col.rgb = mix(vec3(0), col.rgb, smoothstep(threshold-.05,threshold, brightness));
 	fragColor = vec4(col.rgb, s0.a);
 }
 )";
@@ -39,6 +39,7 @@ out vec4 fragColor;
 in vec2 i_uv;
 uniform vec2 texelSize;
 uniform sampler2D inputTexture;
+uniform bool antiFlicker;
 
 float Brightness(vec4 c)
 {
@@ -73,7 +74,12 @@ vec4 getDownSample() {
 
 void main()
 {
-	vec4 col = getDownSampleAntiFlicker();
+	vec4 col;
+	if (antiFlicker) {
+		col = getDownSampleAntiFlicker();
+	} else {
+		col = getDownSample();
+	}
 	fragColor = vec4(col);
 }
 )";
@@ -89,6 +95,7 @@ uniform sampler2D baseTexture;
 in vec2 i_uv;
 uniform float sampleScale;
 uniform vec2 texelSize;
+uniform bool hq;
 
 vec4 getUpSample(vec2 uv) {
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
@@ -119,7 +126,12 @@ vec4 getUpSampleHighQ(vec2 uv) {
 void main()
 {
 	vec4 base = texture( baseTexture, i_uv );
-	vec4 col = getUpSampleHighQ(i_uv);
+	vec4 col;
+	if (hq) {
+		col = getUpSampleHighQ(i_uv);
+	} else {
+		col = getUpSample(i_uv);
+	}
 	fragColor = vec4(base.rgb + col.rgb,base.a);
 }
 )";
@@ -136,6 +148,7 @@ uniform vec2 maxUV;
 uniform float intensity;
 uniform float sampleScale;
 uniform vec2 texelSize;
+uniform bool hq;
 
 vec4 getUpSample(vec2 uv) {
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
@@ -168,7 +181,12 @@ void main()
 	vec4 base = texture( baseTexture, i_uv );
 	vec4 d = texelSize.xyxy * vec4(-1, -1, +1, +1) * sampleScale * 0.5;
 	vec2 uv = i_uv / maxUV ;
-	vec4 col = getUpSampleHighQ(uv);
+	vec4 col;
+	if (hq) {
+		col = getUpSampleHighQ(uv);
+	} else {
+		col = getUpSample(uv);
+	}
 	vec3 outColor = base.rgb + col.rgb * intensity;
 	fragColor = vec4( outColor, base.a);
 }
@@ -181,6 +199,7 @@ Bloom::Bloom()
 	addParam( radius = ParamRange::create( "radius", 2.5f, { 1, 7 } ) );
 	addParam( intensity = ParamRange::create( "intensity", 0.8f, { 0, 1 } ) );
 	addParam( hq = ParamBool::create( "hq" ) );
+	addParam( antiFlicker = ParamBool::create( "antiFlicker" ) );
 }
 
 FFResult Bloom::init()
@@ -230,6 +249,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	// Create a mipmap pyramid
 	downSampleFilter.Use();
 	downSampleFilter.Set( "maxUV", 1.f, 1.f );
+	downSampleFilter.Set( "antiFlicker", (int)antiFlicker->getValue() );
 	for( int i = 0; i < iterations; i++ )
 	{
 		mipmaps[ i ].Create( last->GetWidth() / 2, last->GetHeight() / 2, GL_RGBA16F );
@@ -244,6 +264,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	// upsample and combine loop
 	upSampleFilter.Use();
 	upSampleFilter.Set( "maxUV", 1.f, 1.f );
+	upSampleFilter.Set( "hq", (int)hq->getValue() );
 	for( int i = iterations - 2; i >= 0; i-- )
 	{
 		combine[ i ].Create( mipmaps[ i ].GetWidth(), mipmaps[ i ].GetHeight(), GL_RGBA16F );
@@ -260,6 +281,7 @@ FFResult Bloom::render( ProcessOpenGLStruct* inputTextures )
 	glBindFramebuffer( GL_FRAMEBUFFER, inputTextures->HostFBO );
 	glViewport( 0, 0, currentViewport.width, currentViewport.height );
 	final.Use();
+	final.Set( "hq", (int)hq->getValue() );
 	FFGLTexCoords maxCoords = GetMaxGLTexCoords( *inputTextures->inputTextures[ 0 ] );
 	final.Set( "maxUV", maxCoords.s, maxCoords.t );
 	final.Bind( "inputTexture", 0, last->GetTextureInfo() );
