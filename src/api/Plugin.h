@@ -22,13 +22,13 @@ public:
 	Plugin();
 	~Plugin();
 
-	/// This method allows to create the plugin description
+	/// This method allows to create the plugin description.
+	/// This is what makes your plugin available in the exported library file.
 	template< typename PluginType >
 	static PluginInstance createPlugin( PluginInfo infos, FFUInt32 type );
 
 	/// Implementation of the FFGL InitGL instance specific function. This function allocates
-	/// the OpenGL resources the plugin needs during its lifetime. In this function we assemble the
-	/// different bit of the fragment shader into one and try to compile it. If the shader fails to
+	/// the OpenGL resources the plugin needs during its lifetime. If the shader fails to
 	/// compile we return FF_FAIL.
 	///
 	/// \param	viewPort		Pointer to a FFGLViewportStruct structure (see the definition in FFGL.h
@@ -37,7 +37,7 @@ public:
 	///							correctly FF_FAIL otherwise.
 	FFResult InitGL( const FFGLViewportStruct* viewPort ) override;
 	/// Implementation of the FFGL ProcessOpenGL instance specific function. It is in this function that
-	/// the actual rendering occur. This function takes care of sending all the parameter to the shader.
+	/// the actual rendering occur.
 	///
 	/// \param	inputTextures	This is a parameter containing info about input texture if there is some.
 	/// \return					This implementation always returns FF_SUCCESS.
@@ -48,17 +48,42 @@ public:
 	/// \return					This implementation always returns FF_SUCCESS.
 	FFResult DeInitGL() override;
 
-	/// This function is called by ProcessOpenGL just before the main shader draw call.
+	/// You can override this function to allocate any ressource you will need, shader for example. If any error
+	/// occured (shader fails to compile for example), return FF_FAIL.
+	/// \return                 FF_FAIL if any error occured else FF_SUCCESS
 	virtual FFResult init()
 	{
 		return FF_SUCCESS;
 	};
+	/// You can override this function to do something just before the main shader call. It can for example be usefull
+	/// if you have to react to certains parameter change in a specific way and / or send custom uniform to the shader
 	virtual void update(){};
+	/// The default implementation will just call glDraw with the main shader. You can override this if your plugin needs
+	/// to do more complex things, like calling multiple shaders.
+	/// \return                 FF_FAIL if any error occured else FF_SUCCESS
 	virtual FFResult render( ProcessOpenGLStruct* inputTextures );
+	/// Use this function to free any ressource allocated in your init() function
 	virtual void clean(){};
 
+	/// This function allows to include snippet of code that are provided in Utils.h. This allows plugin
+	/// programmer to not rewrite common code in each plugin. For example, code to get a random number,
+	/// map a value from a range to another, and simplex noise are currently available.
+	/// \param	snippet		The id of a snippet to include.
+	void include( shader::snippet_id snippet );
+	/// This function will call the function just above for each snippets in the set.
+	/// \param	snippets		A set of snippets to include.
+	void include( std::set< shader::snippet_id > snippets );
+	/// In this function we assemble the different bit of the fragment shader into one and try to compile it.
+	/// This allows to add all the default uniform to the begining of the shader so you don't
+	/// have to do it manually. It also permits to add any included snippet to it.
+	/// \param	base		The base of your shader, usually just the void main() function
+	/// \return				The full shader as a string
 	std::string createFragmentShader( std::string base );
+	/// This function is called by the plugin before each render it allows to update all the params that 
+	/// are sent to the main shader.
 	void updateAudioAndTime();
+	/// This function will send all the default uniform and parameter registered by your plugin.
+	/// \param	shader		The shader to send the params
 	void sendParams( ffglex::FFGLShader& shader );
 
 	/// This function is called by the host to get a string representation of any parameter.
@@ -139,15 +164,6 @@ public:
 	/// \param	name		The name of the parameter to get.
 	/// \return				The parameter if we managed to find it.
 	ParamText::Ptr getParamText( std::string name );
-
-	/// This function allows to include snippet of code that are provided in Utils.h. This allows plugin
-	/// programmer to not rewrite common code in each plugin. For example, code to get a random number,
-	/// map a value from a range to another, and simplex noise are currently available.
-	/// \param	snippet		The id of a snippet to include.
-	void include( shader::snippet_id snippet );
-	/// This function will call the function just above for each snippets in the set.
-	/// \param	snippets		A set of snippets to include.
-	void include( std::set< shader::snippet_id > snippets );
 
 protected:
 	std::string fragmentShaderBase;
